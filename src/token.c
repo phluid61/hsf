@@ -15,7 +15,7 @@
 #define LEGIT(c) ( \
  ((sh_char_t)(c) >= SH_CHAR_C(64)) ? \
  ((UINT64_C(1) << ((sh_char_t)(c) - SH_CHAR_C(64))) & UINT64_C(0x57FFFFFFC7FFFFFE)) : \
- ((UINT64_C(1) <<  (sh_char_t)(c)                 ) & UINT64_C(0x27FFECFA00000000)) \
+ ((UINT64_C(1) <<  (sh_char_t)(c)                 ) & UINT64_C(0x07FFECFA00000000)) \
 )
 
 /* malloc */

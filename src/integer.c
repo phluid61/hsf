@@ -77,6 +77,7 @@ SH_Integer__to_s(SH_Integer* obj) {
 	while (n > 0) {
 		n--;
 		*ptr = buffer[n];
+		ptr++;
 	}
 
 	return str;

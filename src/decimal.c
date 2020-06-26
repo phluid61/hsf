@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define FFACTOR SH_FLOAT_C(1000.0)
-#define IFACTOR UINT16_C(1000)
+#define IFACTOR UINT64_C(1000)
 
 /* malloc */
 SH_Decimal*
@@ -26,12 +26,12 @@ SH_Decimal__init(sh_float_t value) {
 		return (SH_Decimal*)0;
 	}
 
-	/* FIXME: relies on `round` */
+	/* FIXME: wrong round (to infinity, should be to even) */
 	f = (uint16_t)(
-			(uint16_t)round(
-				(sh_float_t)fabs((double)value) * FFACTOR
+			(uint64_t)(
+				(sh_float_t)fabs((double)(value * FFACTOR)) + SH_FLOAT_C(0.5)
 			) % IFACTOR
-	);
+		);
 
 	obj = (SH_Decimal*)malloc(sizeof(SH_Decimal)); /*FIXME*/
 	obj->value = (n ? SH_FLOAT_C(-1.0) : SH_FLOAT_C(1.0)) * ((sh_float_t)i + ((sh_float_t)f / FFACTOR));
@@ -76,25 +76,42 @@ sh_char_t*
 SH_Decimal__to_s(SH_Decimal* obj) {
 	sh_char_t* str;
 	sh_char_t* ptr;
-	sh_char_t  buffer[17]; /* sign + 15 digits + null */
+	sh_char_t  buffer[18]; /* sign + 12 digits + dot + 3 digits + null */
 	size_t n;
-	sh_float_t v;
+	sh_int_t v;
 
 	if (obj->value == SH_FLOAT_C(0)) {
-		str = (sh_char_t*)malloc(sizeof(sh_char_t) * 2); /*FIXME*/
+		str = (sh_char_t*)malloc(sizeof(sh_char_t) * 4); /*FIXME*/
 		str[0] = (sh_char_t)'0';
-		str[1] = SH_CHAR_C(0);
+		str[1] = (sh_char_t)'.';
+		str[2] = (sh_char_t)'0';
+		str[3] = SH_CHAR_C(0);
 		return str;
 	}
 
 	n = 0;
-	v = SH_Decimal__abs(obj);
-
 	buffer[n++] = SH_CHAR_C(0);
 
-	while (v > SH_FLOAT_C(0) && n <= 16) {
-		buffer[n++] = (sh_char_t)fmod(v, SH_FLOAT_C(10)) + (sh_char_t)'0';
-		v /= SH_FLOAT_C(10);
+	/* fractional part */
+	v = (sh_int_t)SH_Decimal__fractional_part(obj);
+
+	if (SH_INT_C(0) == v) {
+		buffer[n++] = SH_CHAR_C('0');
+	} else {
+		while (v > SH_INT_C(0)) {
+			buffer[n++] = (sh_char_t)(v % 10) + SH_CHAR_C('0');
+			v /= SH_INT_C(10);
+		}
+	}
+
+	buffer[n++] = SH_CHAR_C('.');
+
+	/* integer part and sign (same as SH_Integer) */
+	v = SH_Decimal__integer_part(obj);
+
+	while (v > SH_INT_C(0) && n <= 14) {
+		buffer[n++] = (sh_char_t)(v % 10) + SH_CHAR_C('0');
+		v /= SH_INT_C(10);
 	}
 
 	/* FIXME: if v > 0: invalid state? */
@@ -108,9 +125,11 @@ SH_Decimal__to_s(SH_Decimal* obj) {
 	while (n > 0) {
 		n--;
 		*ptr = buffer[n];
+		ptr++;
 	}
 
 	return str;
+
 }
 
 /* vim: set ts=4 sts=4 sw=4: */

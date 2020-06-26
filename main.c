@@ -10,7 +10,7 @@
 void print_string(sh_char_t* str);
 
 void do_sh_integer(sh_int_t value);
-void dh_sh_decimal(sh_float_t value);
+void do_sh_decimal(sh_float_t value);
 
 int main() {
 

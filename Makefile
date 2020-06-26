@@ -4,8 +4,8 @@ SRCDIR=./src
 OBJDIR=./obj
 LIBDIR=./lib
 
+HEADERS := $(LIBDIR)/_types.h $(LIBDIR)/_errors.h
 OBJECTS :=
-HEADERS :=
 LIBS    :=
 
 # Names of individual objects/modules
@@ -22,7 +22,9 @@ DEPS  = $(SRCDIR)/_types.h
 #
 
 .PHONY: all
-all: lib
+all: lib main
+
+### OBJECTS AND LIBRARIES
 
 define LIBRARY_RULES
 ifeq (,$$(findstring /$(1).o,$$(OBJECTS)))
@@ -34,19 +36,31 @@ $(1)_SOURCE ?= $$(SRCDIR)/$(1).c
 $(1)_HEADER ?= $$(SRCDIR)/$(1).h
 $(1)_DEPS   ?= 
 $(OBJDIR)/$(1).o: $$($(1)_SOURCE) $$($(1)_HEADER) $$($(1)_DEPS) $$(DEPS)
-	$$(CC) $$(OBJ_CFLAGS) $$(CFLAGS) -c $$< -o $$@
+	$$(CC) $$(OBJ_CFLAGS) $$(CFLAGS) -o $$@ -c $$<
 $(LIBDIR)/$(1).so: $(OBJDIR)/$(1).o
-	$$(CC) -shared $$< -o $$@
+	$$(CC) $$(LIB_CFLAGS) -o $$@ $$<
 endef
 $(foreach lib,$(NAMES),$(eval $(call LIBRARY_RULES,$(lib))))
 
 $(LIBDIR)/%.h: $(SRCDIR)/%.h
 	$(CP) $< $@
 
+### MAIN HARNESS PROGRAM
+
+main.o: main.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
+main: main.o $(LIBS)
+	$(LINK.o) -o $@ $^ -lm
+.PHONY: run
+run: main
+	-./main
+
+### META-RULES
+
 .PHONY: lib clean
 lib: $(HEADERS) $(LIBS)
 clean:
-	-rm $(OBJECTS) $(LIBS) $(HEADERS) $(TESTS) $(TEST_OBJECTS) $(BENCHES) $(BENCH_OBJECTS)
+	-rm -f $(OBJECTS) $(LIBS) $(HEADERS) main.o main
 
 .PHONY: always
 always:

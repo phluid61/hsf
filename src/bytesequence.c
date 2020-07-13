@@ -21,24 +21,26 @@ SH_ByteSequence__init(sh_byte_t* value, size_t n) {
 
 void
 SH_ByteSequence__destroy(SH_ByteSequence* obj) {
-	free(obj->value);
+	if ((sh_byte_t*)0 != obj->value) {
+		free(obj->value);
+	}
 	free(obj);
 }
-
+/*
 sh_char_t*
 SH_ByteSequence__bytes(SH_ByteSequence* obj) {
 	return obj->value;
 }
-
+*/
 size_t
 SH_ByteSequence__length(SH_ByteSequence* obj) {
 	return obj->length;
 }
 
 /* unsafe: c can be > 0xF */
-inline sh_char_t _hex_nibble(sh_byte_t c) { return c + (sh_char_t)(c > 9 ? 'A' : '0'); }
-inline sh_char_t _hex_hi(sh_byte_t c) { return _hex_nibble((c & 0xF0) >> 4); }
-inline sh_char_t _hex_lo(sh_byte_t c) { return _hex_nibble( c & 0x0F      ); }
+#define _hex_nibble(c) ((c) > 9 ? ((c) - 10 + 'A') : ((c) + '0'))
+#define _hex_hi(c) _hex_nibble((c & 0xF0) >> 4)
+#define _hex_lo(c) _hex_nibble( c & 0x0F      )
 
 /* malloc */
 sh_char_t*

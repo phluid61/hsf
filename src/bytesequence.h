@@ -14,10 +14,10 @@ SH_ByteSequence__init(sh_byte_t* value, size_t n);
 
 void
 SH_ByteSequence__destroy(SH_ByteSequence* obj);
-
+/*
 sh_byte_t*
 SH_ByteSequence__bytes(SH_ByteSequence* obj);
-
+*/
 size_t
 SH_ByteSequence__length(SH_ByteSequence* obj);
 

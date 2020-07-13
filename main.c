@@ -6,13 +6,20 @@
 #include "lib/_errors.h"
 #include "lib/integer.h"
 #include "lib/decimal.h"
+#include "lib/string.h"
+#include "lib/bytesequence.h"
 
-void print_string(sh_char_t* str);
+void hexdump_string(const sh_char_t* str);
 
 void do_sh_integer(sh_int_t value);
 void do_sh_decimal(sh_float_t value);
+void do_sh_string(sh_char_t* value, size_t n);
+void do_sh_bytesequence(sh_byte_t* value, size_t n);
 
 int main() {
+
+	sh_char_t unterminated_string[4] = {SH_CHAR_C('"'), SH_CHAR_C('\\'), SH_CHAR_C(0x20), SH_CHAR_C(0x7E)};
+	sh_byte_t unterminated_bytes[6] = {SH_BYTE_C(0), SH_BYTE_C(1), SH_BYTE_C(0x7E), SH_BYTE_C(0x7F), SH_BYTE_C(0xFE), SH_BYTE_C(0xFF)};
 
 	do_sh_integer(SH_INT_C(1));
 	do_sh_integer(SH_INT_C(0));
@@ -35,6 +42,14 @@ int main() {
 	do_sh_decimal(SH_FLOAT_C(-123456789012.1234));
 	do_sh_decimal(SH_FLOAT_C(1000000000000.0));
 	do_sh_decimal(SH_FLOAT_C(-1000000000000.0));
+
+	do_sh_string((sh_char_t*)"", 0);
+	do_sh_string((sh_char_t*)"ABCxyz012!", 10);
+	do_sh_string(unterminated_string, 4);
+
+	do_sh_bytesequence((sh_byte_t*)"", 0);
+	do_sh_bytesequence((sh_byte_t*)"ABCxyz\00012!", 10);
+	do_sh_bytesequence(unterminated_bytes, 6);
 
 	return 0;
 }
@@ -66,7 +81,7 @@ void do_sh_integer(sh_int_t value) {
 			printf("  * unable to to_s\n");
 		} else {
 			printf("  - to_s =:\n");
-			print_string(s);
+			hexdump_string(s);
 			free(s);
 		}
 
@@ -110,7 +125,7 @@ void do_sh_decimal(sh_float_t value) {
 			printf("  * unable to to_s\n");
 		} else {
 			printf("  - to_s =:\n");
-			print_string(s);
+			hexdump_string(s);
 			free(s);
 		}
 
@@ -119,12 +134,84 @@ void do_sh_decimal(sh_float_t value) {
 	printf("\n");
 }
 
+void do_sh_string(sh_char_t* value, size_t n) {
+	SH_String *obj;
+
+	/* used to printf() value, looks like "%#{n}s" */
+	char template[8];
+
+	uint16_t u;
+	sh_char_t* s;
+
+	snprintf(template, 8, "%%%lus", n);
+
+	obj = SH_String__init(value, n);
+	if ((SH_String*)0 == obj) {
+		printf("* unable to init SH_String(\"");
+		printf(template, (char*)value);
+		printf("\", %lu)\n", n);
+	} else {
+		printf("+ init SH_String(\"");
+		printf(template, (char*)value);
+		printf("\", %lu)\n", n);
+
+		u = SH_String__length(obj);
+		printf("  - length =: %hu\n", u);
+
+		s = SH_String__to_s(obj);
+		if ((sh_char_t*)0 == s) {
+			printf("  * unable to to_s\n");
+		} else {
+			printf("  - to_s =:\n");
+			hexdump_string(s);
+			free(s);
+		}
+
+		SH_String__destroy(obj);
+	}
+}
+
+void do_sh_bytesequence(sh_byte_t* value, size_t n) {
+	SH_ByteSequence *obj;
+
+	/* used to printf() value, looks like "%#{n}s" */
+	char template[8];
+
+	uint16_t u;
+	sh_char_t* s;
+
+	snprintf(template, 8, "%%%lus", n);
+
+	obj = SH_ByteSequence__init(value, n);
+	if ((SH_ByteSequence*)0 == obj) {
+		printf("* unable to init SH_ByteSequence({...");
+		printf("}, %lu)\n", n);
+	} else {
+		printf("+ init SH_ByteSequence({...");
+		printf("}, %lu)\n", n);
+
+		u = SH_ByteSequence__length(obj);
+		printf("  - length =: %hu\n", u);
+
+		s = SH_ByteSequence__to_s(obj);
+		if ((sh_char_t*)0 == s) {
+			printf("  * unable to to_s\n");
+		} else {
+			printf("  - to_s =:\n");
+			hexdump_string(s);
+			free(s);
+		}
+
+		SH_ByteSequence__destroy(obj);
+	}
+}
+
 const char hexdump_rule[72] = "+--------------------------------------------------+-------------------+";
 const char hexdump_line[72] = "|                                                  |                   |";
 const char hexdump_char[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
-void print_string(sh_char_t* str) {
-	sh_char_t* ptr = str;
+void hexdump_string(const sh_char_t* str) {
+	sh_char_t* ptr = (sh_char_t*)str;
 	int n = 0;
 	int i, j;
 	char line[72];
@@ -155,7 +242,7 @@ void print_string(sh_char_t* str) {
 		line[i++] = hexdump_char[ (*ptr) & 0x0F];
 		i++;
 
-		if (*ptr > SH_CHAR_C(0x20) && *ptr < SH_CHAR_C(0x7F)) {
+		if (*ptr >= SH_CHAR_C(0x20) && *ptr < SH_CHAR_C(0x7F)) {
 			line[j++] = (char)(*ptr);
 		} else {
 			line[j++] = '.';

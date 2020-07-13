@@ -5,45 +5,54 @@
 
 /* malloc */
 SH_String*
-SH_String__init(sh_char_t* value) {
+SH_String__init(sh_char_t* value, size_t n) {
 	SH_String* obj;
 	sh_char_t* ptr;
 	sh_char_t  c;
-	size_t n;
-
-	ptr = value;
-	n = 0;
-	while ((c = *ptr) != SH_CHAR_C(0) && n <= SH_STRING_LENGTH_MAX) {
-		if (c >= SH_CHAR_C(0x20) && c <= SH_CHAR_C(0x7E)) {
-			ptr++;
-			n++;
-		} else {
-			return (SH_String*)0;
-		}
-	}
+	size_t m;
 
 	if (n > SH_STRING_LENGTH_MAX) {
 		return (SH_String*)0;
 	}
 
+	ptr = value;
+	m = 0;
+	while (m < n) {
+		c = *ptr;
+		if (c >= SH_CHAR_C(0x20) && c <= SH_CHAR_C(0x7E)) {
+			ptr++;
+			m++;
+		} else {
+			return (SH_String*)0;
+		}
+	}
+
 	obj = (SH_String*)malloc(sizeof(SH_String)); /*FIXME*/
-	obj->value = (sh_char_t*)malloc(sizeof(sh_char_t) * (n + 1)); /*FIXME*/
-	memcpy((void*)obj->value, (const void*)value, n + 1); /*FIXME*/
-	obj->length = n;
+	obj->value = (sh_char_t*)malloc(sizeof(sh_char_t) * (m + 1)); /*FIXME*/
+	memcpy((void*)obj->value, (const void*)value, m); /*FIXME*/
+	obj->value[m] = SH_CHAR_C(0);
+	obj->length = m;
 	return obj;
 }
 
 void
 SH_String__destroy(SH_String* obj) {
-	free(obj->value);
+	if ((sh_char_t*)0 != obj->value) {
+		free(obj->value);
+	}
 	free(obj);
 }
 
+size_t
+SH_String__length(SH_String* obj) {
+	return obj->length;
+}
+/*
 sh_char_t*
 SH_String__string(SH_String* obj) {
 	return obj->value;
 }
-
+*/
 /* malloc */
 sh_char_t*
 SH_String__to_s(SH_String* obj) {

@@ -9,14 +9,17 @@
 
 /* malloc */
 SH_String*
-SH_String__init(sh_char_t* value);
+SH_String__init(sh_char_t* value, size_t n);
 
 void
 SH_String__destroy(SH_String* obj);
 
+size_t
+SH_String__length(SH_String* obj);
+/*
 sh_char_t*
 SH_String__string(SH_String* obj);
-
+*/
 /* malloc */
 sh_char_t*
 SH_String__to_s(SH_String* obj);

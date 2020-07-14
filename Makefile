@@ -4,7 +4,7 @@ SRCDIR=./src
 OBJDIR=./obj
 LIBDIR=./lib
 
-HEADERS := $(LIBDIR)/_types.h $(LIBDIR)/_errors.h
+HEADERS := $(LIBDIR)/types.h $(LIBDIR)/errors.h
 OBJECTS :=
 LIBS    :=
 
@@ -12,7 +12,7 @@ LIBS    :=
 NAMES = integer decimal string token bytesequence boolean
 
 # Dependencies shared by all objects/modules
-DEPS  = $(SRCDIR)/_types.h
+DEPS  = $(SRCDIR)/types.h
 
 # Specific dependencies/headers/etc. can be defined by:
 #

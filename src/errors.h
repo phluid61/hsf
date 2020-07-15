@@ -10,6 +10,8 @@
  * bytesequence                     0x0015____
  * boolean                          0x0016____
  *
+ * key                              0x0020____
+ *
  * sys err                          0x8000____
  */
 
@@ -28,6 +30,9 @@
 #define SH_E_TOKEN_BAD_CHAR         0x00140002
 
 #define SH_E_BYTESEQUENCE_TOO_LONG  0x00150001
+
+#define SH_E_KEY_TOO_LONG           0x00200001
+#define SH_E_KEY_BAD_CHAR           0x00200002
 
 /* errno */
 #define SH_E_MALLOC_ERROR           0x80000001

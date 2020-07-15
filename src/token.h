@@ -2,7 +2,7 @@
 #define _SH_TOKEN_H_
 
 #include "types.h"
-#include <string.h>
+#include <stdlib.h>
 
 /* by spec this must never be less than 512 */
 #define SH_TOKEN_LENGTH_MAX ((size_t) 512)

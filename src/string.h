@@ -2,7 +2,7 @@
 #define _SH_STRING_H_
 
 #include "types.h"
-#include <string.h>
+#include <stdlib.h>
 
 /* by spec this must never be less than 1024 */
 #define SH_STRING_LENGTH_MAX ((size_t) 1024)

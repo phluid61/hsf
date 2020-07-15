@@ -9,7 +9,7 @@
 /* malloc */
 SH_Boolean*
 SH_Boolean__init(sh_bool_t value, int* err) {
-	SH_Boolean* obj = (SH_Boolean*)malloc(sizeof(SH_Boolean)); /*FIXME*/
+	SH_Boolean* obj = (SH_Boolean*)malloc(sizeof(SH_Boolean));
 	if ((SH_Boolean*)0 == obj) {
 		__raise(err, SH_E_MALLOC_ERROR);
 		return (SH_Boolean*)0;
@@ -48,7 +48,7 @@ SH_Boolean__false(SH_Boolean* obj, int* err) {
 /* malloc */
 sh_char_t*
 SH_Boolean__to_s(SH_Boolean* obj, int* err) {
-	sh_char_t* str = (sh_char_t*)malloc(sizeof(sh_char_t) * 3); /*FIXME*/
+	sh_char_t* str = (sh_char_t*)malloc(sizeof(sh_char_t) * 3);
 	if ((sh_char_t*)0 == str) {
 		__raise(err, SH_E_MALLOC_ERROR);
 		return (sh_char_t*)0;

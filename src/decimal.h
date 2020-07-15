@@ -2,6 +2,7 @@
 #define _SH_DECIMAL_H_
 
 #include "types.h"
+#include <stdint.h>
 
 /* malloc */
 SH_Decimal*

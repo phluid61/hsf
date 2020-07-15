@@ -2,7 +2,6 @@
 #define _SH_BYTESEQUENCE_H_
 
 #include "types.h"
-#include <string.h>
 #include <stdlib.h>
 
 /* by spec this must never be less than 16384 */

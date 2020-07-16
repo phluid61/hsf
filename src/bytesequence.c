@@ -1,8 +1,8 @@
-
 #include "bytesequence.h"
 
 #include "types.h"
 #include "errors.h"
+
 #include <stdlib.h>
 #include <string.h>
 

@@ -1,8 +1,8 @@
-
 #include "boolean.h"
 
 #include "types.h"
 #include "errors.h"
+
 #include <stdlib.h>
 
 #define __clear(v)      { if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR; }

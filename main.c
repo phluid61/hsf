@@ -482,3 +482,4 @@ void hexdump_string(const sh_char_t* str) {
 	printf("%s\n", hexdump_rule);
 }
 
+/* vim: set ts=4 sts=4 sw=4: */

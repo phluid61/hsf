@@ -1,6 +1,8 @@
-
 #include "token.h"
+
+#include "types.h"
 #include "errors.h"
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>

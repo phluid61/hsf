@@ -9,7 +9,7 @@ OBJECTS :=
 LIBS    :=
 
 # Names of individual objects/modules
-NAMES = integer decimal string token bytesequence boolean item _dict
+NAMES = integer decimal string token bytesequence boolean item key _dict
 
 # Dependencies shared by all objects/modules
 DEPS  = $(SRCDIR)/types.h

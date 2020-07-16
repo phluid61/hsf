@@ -35,45 +35,61 @@ typedef enum {
 	SH_INNERLIST /* special case */
 } SH_Item_type;
 
-typedef struct SH_Item {
+typedef struct SH_BareItem     SH_BareItem;
+typedef struct SH_Item         SH_Item;
+
+typedef struct SH_Boolean      SH_Boolean;
+typedef struct SH_ByteSequence SH_ByteSequence;
+typedef struct SH_Decimal      SH_Decimal;
+typedef struct SH_Integer      SH_Integer;
+typedef struct SH_Key          SH_Key;
+typedef struct SH_String       SH_String;
+typedef struct SH_Token        SH_Token;
+
+struct SH_BareItem {
 	SH_Item_type type;
 	void* ptr;
-} SH_Item;
+};
 
-typedef struct SH_Boolean {
+struct SH_Item {
+	SH_BareItem* item;
+	/*params*/
+};
+
+struct SH_Boolean {
 	sh_bool_t value;
-} SH_Boolean;
+};
 
-typedef struct SH_ByteSequence {
+struct SH_ByteSequence {
 	sh_byte_t *value;
 	size_t     length;
-} SH_ByteSequence;
+};
 
-typedef struct SH_Decimal {
+struct SH_Decimal {
 	sh_float_t value;
 	sh_bool_t  _neg;
 	sh_int_t   _int;
 	uint16_t   _frac;
-} SH_Decimal;
+};
 
-typedef struct SH_Integer {
+struct SH_Integer {
 	sh_int_t value;
-} SH_Integer;
+};
 
-typedef struct SH_Key {
+struct SH_Key {
 	sh_char_t *value;
 	size_t     length;
-} SH_Key;
+};
 
-typedef struct SH_String {
+struct SH_String {
 	sh_char_t *value;
 	size_t     length;
-} SH_String;
+};
 
-typedef struct SH_Token {
+struct SH_Token {
 	sh_char_t *value;
 	size_t     length;
-} SH_Token;
+};
 
 #endif
 /* vim: set ts=4 sts=4 sw=4: */

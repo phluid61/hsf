@@ -98,7 +98,7 @@ SH_Key__hash(SH_Key* obj, int* err) {
 }
 
 sh_bool_t
-SH_Key__equal(SH_Key* obj, SH_Key* other, err) {
+SH_Key__equal(SH_Key* obj, SH_Key* other, int* err) {
 	size_t i;
 
 	if (obj->length != other->length) {

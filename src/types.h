@@ -35,8 +35,8 @@ typedef enum {
 	SH_INNERLIST /* special case */
 } SH_Item_type;
 
-typedef struct SH_BareItem     SH_BareItem;
 typedef struct SH_Item         SH_Item;
+typedef struct SH_BareItem     SH_BareItem;
 
 typedef struct SH_Boolean      SH_Boolean;
 typedef struct SH_ByteSequence SH_ByteSequence;
@@ -46,6 +46,10 @@ typedef struct SH_Key          SH_Key;
 typedef struct SH_String       SH_String;
 typedef struct SH_Token        SH_Token;
 
+typedef struct SH_dict_pair   SH_dict_pair;
+typedef struct SH_dict_bucket SH_dict_bucket;
+typedef struct SH_dict        SH_dict;
+
 struct SH_BareItem {
 	SH_Item_type type;
 	void* ptr;
@@ -53,7 +57,7 @@ struct SH_BareItem {
 
 struct SH_Item {
 	SH_BareItem* item;
-	/*params*/
+	SH_dict*     params;
 };
 
 struct SH_Boolean {
@@ -89,6 +93,31 @@ struct SH_String {
 struct SH_Token {
 	sh_char_t *value;
 	size_t     length;
+};
+
+/* 8-bit hash = 256 buckets */
+#define SH_dict_bucket_count 256
+
+/* For a perfect hash, 1024 pairs / 256 buckets = 4 pairs per bucket */
+#define SH_dict_bucket_size 4
+
+struct SH_dict_pair {
+	SH_Key* key;
+	SH_Item* value;
+};
+
+struct SH_dict_bucket {
+	size_t num;
+	SH_dict_pair* pairs[SH_dict_bucket_size];
+	SH_dict_bucket* next; /* in case there are more than SH_dict_bucket_size keys with the same hash */
+};
+
+struct SH_dict {
+	/* array using hash for index */
+	SH_dict_bucket* _hash[SH_dict_bucket_count];
+
+	/* insertion-ordered linked list */
+	SH_dict_bucket* _list;
 };
 
 #endif

@@ -1,5 +1,7 @@
 
 #include "integer.h"
+
+#include "types.h"
 #include "errors.h"
 #include <stdlib.h>
 

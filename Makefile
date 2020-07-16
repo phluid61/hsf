@@ -9,10 +9,10 @@ OBJECTS :=
 LIBS    :=
 
 # Names of individual objects/modules
-NAMES = integer decimal string token bytesequence boolean item key _dict
+NAMES = integer decimal string token bytesequence boolean bareitem item key _dict
 
 # Dependencies shared by all objects/modules
-DEPS  = $(SRCDIR)/types.h
+DEPS  = $(SRCDIR)/types.h $(SRCDIR)/errors.h
 
 # Specific dependencies/headers/etc. can be defined by:
 #
@@ -20,6 +20,8 @@ DEPS  = $(SRCDIR)/types.h
 #foo_HEADER = some-file.h
 #foo_DEPS   = include.inc header.h et.c
 #
+
+_dict_DEPS    = $(SRCDIR)/key.h $(SRCDIR)/item.h
 
 .PHONY: all
 all: lib main

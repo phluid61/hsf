@@ -9,22 +9,22 @@ SH_BareItem*
 SH_BareItem__init_null(int* err);
 
 SH_BareItem*
-SH_BareItem__init_integer(SH_Integer* obj, int* err);
+SH_BareItem__init_integer(SH_Integer* value, int* err);
 
 SH_BareItem*
-SH_BareItem__init_decimal(SH_Decimal* obj, int* err);
+SH_BareItem__init_decimal(SH_Decimal* value, int* err);
 
 SH_BareItem*
-SH_BareItem__init_string(SH_String* obj, int* err);
+SH_BareItem__init_string(SH_String* value, int* err);
 
 SH_BareItem*
-SH_BareItem__init_token(SH_Token* obj, int* err);
+SH_BareItem__init_token(SH_Token* value, int* err);
 
 SH_BareItem*
-SH_BareItem__init_bytesequence(SH_ByteSequence* obj, int* err);
+SH_BareItem__init_bytesequence(SH_ByteSequence* value, int* err);
 
 SH_BareItem*
-SH_BareItem__init_boolean(SH_Boolean* obj, int* err);
+SH_BareItem__init_boolean(SH_Boolean* value, int* err);
 
 void
 SH_BareItem__destroy(SH_BareItem* obj, sh_bool_t recursive, int* err);

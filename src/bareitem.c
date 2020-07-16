@@ -37,33 +37,33 @@ SH_BareItem__init_null(int* err) {
 }
 
 SH_BareItem*
-SH_BareItem__init_integer(SH_Integer* obj, int* err) {
-	do_init(SH_INTEGER, obj, err);
+SH_BareItem__init_integer(SH_Integer* value, int* err) {
+	do_init(SH_INTEGER, value, err);
 }
 
 SH_BareItem*
-SH_BareItem__init_decimal(SH_Decimal* obj, int* err) {
-	do_init(SH_DECIMAL, obj, err);
+SH_BareItem__init_decimal(SH_Decimal* value, int* err) {
+	do_init(SH_DECIMAL, value, err);
 }
 
 SH_BareItem*
-SH_BareItem__init_string(SH_String* obj, int* err) {
-	do_init(SH_STRING, obj, err);
+SH_BareItem__init_string(SH_String* value, int* err) {
+	do_init(SH_STRING, value, err);
 }
 
 SH_BareItem*
-SH_BareItem__init_token(SH_Token* obj, int* err) {
-	do_init(SH_TOKEN, obj, err);
+SH_BareItem__init_token(SH_Token* value, int* err) {
+	do_init(SH_TOKEN, value, err);
 }
 
 SH_BareItem*
-SH_BareItem__init_bytesequence(SH_ByteSequence* obj, int* err) {
-	do_init(SH_BYTESEQUENCE, obj, err);
+SH_BareItem__init_bytesequence(SH_ByteSequence* value, int* err) {
+	do_init(SH_BYTESEQUENCE, value, err);
 }
 
 SH_BareItem*
-SH_BareItem__init_boolean(SH_Boolean* obj, int* err) {
-	do_init(SH_BOOLEAN, obj, err);
+SH_BareItem__init_boolean(SH_Boolean* value, int* err) {
+	do_init(SH_BOOLEAN, value, err);
 }
 
 #define do_destroy(t, obj) { \

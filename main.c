@@ -189,8 +189,8 @@ void do_sh_integer(sh_int_t value) {
 }
 
 void do_sh_decimal(sh_float_t value) {
-	SH_Decimal *obj;
-	SH_BareItem *bi;
+	SH_Decimal* obj;
+	SH_BareItem* bi;
 
 	sh_float_t f;
 	sh_bool_t b;
@@ -244,7 +244,7 @@ void do_sh_decimal(sh_float_t value) {
 }
 
 void do_sh_string(sh_char_t* value, size_t n) {
-	SH_String *obj;
+	SH_String* obj;
 	SH_BareItem* bi;
 
 	/* used to printf() value, looks like "%#{n}s" */
@@ -293,7 +293,7 @@ void do_sh_string(sh_char_t* value, size_t n) {
 }
 
 void do_sh_token(sh_char_t* value, size_t n) {
-	SH_Token *obj;
+	SH_Token* obj;
 	SH_BareItem* bi;
 
 	/* used to printf() value, looks like "%#{n}s" */
@@ -338,7 +338,7 @@ void do_sh_token(sh_char_t* value, size_t n) {
 }
 
 void do_sh_bytesequence(sh_byte_t* value, size_t n) {
-	SH_ByteSequence *obj;
+	SH_ByteSequence* obj;
 	SH_BareItem* bi;
 
 	uint16_t u;
@@ -380,7 +380,7 @@ void do_sh_bytesequence(sh_byte_t* value, size_t n) {
 }
 
 void do_sh_boolean(sh_bool_t value) {
-	SH_Boolean *obj;
+	SH_Boolean* obj;
 	SH_BareItem* bi;
 
 	sh_bool_t b;

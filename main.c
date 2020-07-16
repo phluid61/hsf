@@ -4,6 +4,7 @@
 
 #include "lib/types.h"
 #include "lib/errors.h"
+#include "lib/bareitem.h"
 #include "lib/integer.h"
 #include "lib/decimal.h"
 #include "lib/string.h"
@@ -12,6 +13,10 @@
 #include "lib/boolean.h"
 
 void hexdump_string(const sh_char_t* str);
+
+void do_sh_bareitem(SH_BareItem* obj);
+
+void do_sh_null();
 
 void do_sh_integer(sh_int_t value);
 void do_sh_decimal(sh_float_t value);
@@ -25,6 +30,8 @@ int main() {
 	sh_char_t unterminated_string[4] = {SH_CHAR_C('"'), SH_CHAR_C('\\'), SH_CHAR_C(0x20), SH_CHAR_C(0x7E)};
 	sh_char_t unterminated_token[4] = {SH_CHAR_C('*'), SH_CHAR_C('#'), SH_CHAR_C(0x24), SH_CHAR_C(0x60)};
 	sh_byte_t unterminated_bytes[6] = {SH_BYTE_C(0), SH_BYTE_C(1), SH_BYTE_C(0x7E), SH_BYTE_C(0x7F), SH_BYTE_C(0xFE), SH_BYTE_C(0xFF)};
+
+	do_sh_null();
 
 	printf("%c[32m === INTEGER ==============%c[0m\n", 0x1b, 0x1b);
 
@@ -79,8 +86,64 @@ int main() {
 	return 0;
 }
 
+void do_sh_bareitem(SH_BareItem* obj) {
+	SH_Item_type t;
+	sh_char_t* s;
+	void* x;
+
+	int err;
+
+	t = SH_BareItem__type(obj, 0);
+	printf("    - type =: %u\n", (unsigned int)t);
+
+	x = (void*)SH_BareItem__get_integer(obj, &err);
+	printf("    o get_integer: [%llX] 0x%08X\n", (long long)x, err);
+
+	x = (void*)SH_BareItem__get_decimal(obj, &err);
+	printf("    o get_decimal: [%llX] 0x%08X\n", (long long)x, err);
+
+	x = (void*)SH_BareItem__get_string(obj, &err);
+	printf("    o get_string: [%llX] 0x%08X\n", (long long)x, err);
+
+	x = (void*)SH_BareItem__get_token(obj, &err);
+	printf("    o get_token: [%llX] 0x%08X\n", (long long)x, err);
+
+	x = (void*)SH_BareItem__get_bytesequence(obj, &err);
+	printf("    o get_bytesequence: [%llX] 0x%08X\n", (long long)x, err);
+
+	x = (void*)SH_BareItem__get_boolean(obj, &err);
+	printf("    o get_boolean: [%llX] 0x%08X\n", (long long)x, err);
+
+	s = SH_BareItem__to_s(obj, &err);
+	if ((sh_char_t*)0 == s || err) {
+		printf("    * unable to to_s: [%llX] 0x%08X\n", (long long)s, err);
+	} else {
+		printf("    - to_s =:\n");
+		hexdump_string(s);
+		free(s);
+	}
+}
+
+void do_sh_null() {
+	SH_BareItem* bi;
+
+	int err;
+
+	printf("+ NULL item\n");
+
+	bi = SH_BareItem__init_null(&err);
+	if ((SH_BareItem*)0 == bi || err) {
+		printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
+	} else {
+		printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
+		do_sh_bareitem(bi);
+		SH_BareItem__destroy(bi, SH_FALSE, 0);
+	}
+}
+
 void do_sh_integer(sh_int_t value) {
 	SH_Integer* obj;
+	SH_BareItem* bi;
 
 	sh_int_t i;
 	sh_bool_t b;
@@ -112,13 +175,22 @@ void do_sh_integer(sh_int_t value) {
 			free(s);
 		}
 
+		bi = SH_BareItem__init_integer(obj, &err);
+		if ((SH_BareItem*)0 == bi || err) {
+			printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
+		} else {
+			printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
+			do_sh_bareitem(bi);
+			SH_BareItem__destroy(bi, SH_FALSE, 0);
+		}
+
 		SH_Integer__destroy(obj, 0);
 	}
-	printf("\n");
 }
 
 void do_sh_decimal(sh_float_t value) {
 	SH_Decimal *obj;
+	SH_BareItem *bi;
 
 	sh_float_t f;
 	sh_bool_t b;
@@ -158,13 +230,22 @@ void do_sh_decimal(sh_float_t value) {
 			free(s);
 		}
 
+		bi = SH_BareItem__init_decimal(obj, &err);
+		if ((SH_BareItem*)0 == bi || err) {
+			printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
+		} else {
+			printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
+			do_sh_bareitem(bi);
+			SH_BareItem__destroy(bi, SH_FALSE, 0);
+		}
+
 		SH_Decimal__destroy(obj, 0);
 	}
-	printf("\n");
 }
 
 void do_sh_string(sh_char_t* value, size_t n) {
 	SH_String *obj;
+	SH_BareItem* bi;
 
 	/* used to printf() value, looks like "%#{n}s" */
 	char template[8];
@@ -198,12 +279,22 @@ void do_sh_string(sh_char_t* value, size_t n) {
 			free(s);
 		}
 
+		bi = SH_BareItem__init_string(obj, &err);
+		if ((SH_BareItem*)0 == bi || err) {
+			printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
+		} else {
+			printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
+			do_sh_bareitem(bi);
+			SH_BareItem__destroy(bi, SH_FALSE, 0);
+		}
+
 		SH_String__destroy(obj, 0);
 	}
 }
 
 void do_sh_token(sh_char_t* value, size_t n) {
 	SH_Token *obj;
+	SH_BareItem* bi;
 
 	/* used to printf() value, looks like "%#{n}s" */
 	char template[8];
@@ -233,12 +324,22 @@ void do_sh_token(sh_char_t* value, size_t n) {
 			free(s);
 		}
 
+		bi = SH_BareItem__init_token(obj, &err);
+		if ((SH_BareItem*)0 == bi || err) {
+			printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
+		} else {
+			printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
+			do_sh_bareitem(bi);
+			SH_BareItem__destroy(bi, SH_FALSE, 0);
+		}
+
 		SH_Token__destroy(obj, 0);
 	}
 }
 
 void do_sh_bytesequence(sh_byte_t* value, size_t n) {
 	SH_ByteSequence *obj;
+	SH_BareItem* bi;
 
 	uint16_t u;
 	sh_char_t* s;
@@ -265,12 +366,22 @@ void do_sh_bytesequence(sh_byte_t* value, size_t n) {
 			free(s);
 		}
 
+		bi = SH_BareItem__init_bytesequence(obj, &err);
+		if ((SH_BareItem*)0 == bi || err) {
+			printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
+		} else {
+			printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
+			do_sh_bareitem(bi);
+			SH_BareItem__destroy(bi, SH_FALSE, 0);
+		}
+
 		SH_ByteSequence__destroy(obj, 0);
 	}
 }
 
 void do_sh_boolean(sh_bool_t value) {
 	SH_Boolean *obj;
+	SH_BareItem* bi;
 
 	sh_bool_t b;
 	sh_char_t* s;
@@ -299,6 +410,15 @@ void do_sh_boolean(sh_bool_t value) {
 			printf("  - to_s =:\n");
 			hexdump_string(s);
 			free(s);
+		}
+
+		bi = SH_BareItem__init_boolean(obj, &err);
+		if ((SH_BareItem*)0 == bi || err) {
+			printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
+		} else {
+			printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
+			do_sh_bareitem(bi);
+			SH_BareItem__destroy(bi, SH_FALSE, 0);
 		}
 
 		SH_Boolean__destroy(obj, 0);

@@ -22,6 +22,7 @@ DEPS  = $(SRCDIR)/types.h $(SRCDIR)/errors.h
 #
 
 _dict_DEPS    = $(SRCDIR)/key.h $(SRCDIR)/item.h
+bareitem_DEPS = $(SRCDIR)/integer.h $(SRCDIR)/decimal.h $(SRCDIR)/string.h $(SRCDIR)/token.h $(SRCDIR)/bytesequence.h $(SRCDIR)/boolean.h
 
 .PHONY: all
 all: lib main
@@ -67,3 +68,5 @@ clean:
 .PHONY: always
 always:
 	true
+
+# vim: set ts=4 sts=4 sw=4:

@@ -32,7 +32,7 @@ typedef enum {
 	SH_BYTESEQUENCE,
 	SH_BOOLEAN,
 
-	SH_INNERLIST /* special case */
+	/*SH_INNERLIST*/ /* special case */
 } SH_Item_type;
 
 typedef struct SH_Item         SH_Item;

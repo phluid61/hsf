@@ -2,7 +2,7 @@
 #define _SH_ERRORS_H_
 
 /*
- * ITEM                             0x001F____
+ * item                             0x0010____
  * integer                          0x0011____
  * decimal                          0x0012____
  * string                           0x0013____
@@ -18,6 +18,8 @@
 #define SH_E_NO_ERROR               0x00000000
 
 #define SH_E_NULL_POINTER           0x00000001
+
+#define SH_E_ITEM_WRONG_TYPE        0x00100001
 
 #define SH_E_INTEGER_OUT_OF_BOUNDS  0x00110001
 
@@ -38,4 +40,4 @@
 #define SH_E_MALLOC_ERROR           0x80000001
 
 #endif
-
+/* vim: set ts=4 sts=4 sw=4: */

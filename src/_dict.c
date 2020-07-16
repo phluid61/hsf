@@ -121,3 +121,4 @@ SH_dict__add(SH_dict* obj, SH_dict_pair* pair, int* err) {
 	if (err) return; /* FIXME are we left in a broken state? */
 }
 
+/* vim: set ts=4 sts=4 sw=4: */

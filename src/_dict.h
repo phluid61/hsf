@@ -24,3 +24,4 @@ void
 SH_dict__add(SH_dict* obj, SH_dict_pair* pair, int* err);
 
 #endif
+/* vim: set ts=4 sts=4 sw=4: */

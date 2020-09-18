@@ -50,7 +50,7 @@ SH_Key__init(sh_char_t* value, size_t n, int* err) {
 		return (SH_Key*)0;
 	}
 
-	obj->value = (sh_char_t*)malloc(sizeof(sh_char_t) * (m + 1));
+	obj->value = (sh_char_t*)calloc(sizeof(sh_char_t), m + 1);
 	if ((sh_char_t*)0 == obj->value) {
 		free(obj);
 		__raise(err, SH_E_MALLOC_ERROR);

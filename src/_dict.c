@@ -102,7 +102,7 @@ SH_dict__destroy(SH_dict* obj, sh_bool_t recursive, int* err) {
 	__clear(err);
 }
 
-SH_dict_pair*
+SH_Item*
 SH_dict__get(SH_dict* obj, SH_Key* key, int* err) {
 	size_t i;
 	uint8_t hash;
@@ -117,7 +117,7 @@ SH_dict__get(SH_dict* obj, SH_Key* key, int* err) {
 			pair = bucket->pairs[i];
 			if (SH_Key__equal(key, pair->key, 0)) { /*FIXME: err?*/
 				__clear(err);
-				return pair;
+				return pair->value;
 			}
 		}
 		bucket = bucket->next;
@@ -125,7 +125,7 @@ SH_dict__get(SH_dict* obj, SH_Key* key, int* err) {
 
 	/* not found, but no error */
 	__clear(err);
-	return (SH_dict_pair*)0;
+	return (SH_Item*)0;
 }
 
 /* doesn't check for duplicates */

@@ -26,7 +26,7 @@ SH_dict__init(int* err);
 void
 SH_dict__destroy(SH_dict* obj, sh_bool_t recursive, int* err);
 
-SH_dict_pair*
+SH_Item*
 SH_dict__get(SH_dict* obj, SH_Key* key, int* err);
 
 void

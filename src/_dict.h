@@ -17,5 +17,8 @@ SH_dict__get(SH_dict* obj, SH_Key* key, int* err);
 void
 SH_dict__add(SH_dict* obj, SH_Key* key, SH_Item* item, int* err);
 
+void
+SH_dict__each_item(SH_dict* obj, void (*func)(SH_Item* item, int* err), int* err);
+
 #endif
 /* vim: set ts=4 sts=4 sw=4: */

@@ -6,8 +6,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define __clear(v)      if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR;
-#define __raise(v,code) if ((int*)0 != (v)) *(v) = (code);
+#include "error_macros.h"
 
 #define FFACTOR SH_FLOAT_C(1000.0)
 #define IFACTOR UINT64_C(1000)
@@ -19,6 +18,8 @@ SH_Decimal__init(sh_float_t value, int* err) {
 	sh_bool_t n; /*negative?*/
 	sh_int_t i;  /*(abs) int val*/
 	uint16_t f;  /*fraction part*/
+
+	__cascade(err, (SH_Decimal*)0);
 
 	i = (sh_int_t)value;
 	if (i < 0) {
@@ -57,36 +58,42 @@ SH_Decimal__init(sh_float_t value, int* err) {
 
 void
 SH_Decimal__destroy(SH_Decimal* obj, int* err) {
+	__cascade(err,);
 	free(obj);
 	__clear(err);
 }
 
 sh_float_t
 SH_Decimal__float(SH_Decimal* obj, int* err) {
+	__cascade(err, SH_FLOAT_C(0.0));
 	__clear(err);
 	return obj->value;
 }
 
 sh_float_t
 SH_Decimal__abs(SH_Decimal* obj, int* err) {
+	__cascade(err, SH_FLOAT_C(0.0));
 	__clear(err);
 	return (sh_float_t)fabs((double)obj->value);
 }
 
 sh_bool_t
 SH_Decimal__negative(SH_Decimal* obj, int* err) {
+	__cascade(err, SH_FALSE);
 	__clear(err);
 	return obj->_neg;
 }
 
 sh_int_t
 SH_Decimal__integer_part(SH_Decimal* obj, int* err) {
+	__cascade(err, SH_INT_C(0));
 	__clear(err);
 	return obj->_int;
 }
 
 uint16_t
 SH_Decimal__fractional_part(SH_Decimal* obj, int* err) {
+	__cascade(err, UINT16_C(0));
 	__clear(err);
 	return obj->_frac;
 }
@@ -99,6 +106,8 @@ SH_Decimal__to_s(SH_Decimal* obj, int* err) {
 	sh_char_t  buffer[18]; /* sign + 12 digits + dot + 3 digits + null */
 	size_t n;
 	sh_int_t v;
+
+	__cascade(err, (sh_char_t*)0);
 
 	if (obj->value == SH_FLOAT_C(0)) {
 		str = (sh_char_t*)malloc(sizeof(sh_char_t) * 4);

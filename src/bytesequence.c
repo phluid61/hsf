@@ -6,13 +6,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define __clear(v)      if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR;
-#define __raise(v,code) if ((int*)0 != (v)) *(v) = (code);
+#include "error_macros.h"
 
 /* malloc */
 SH_ByteSequence*
 SH_ByteSequence__init(sh_byte_t* value, size_t n, int* err) {
 	SH_ByteSequence* obj;
+
+	__cascade(err, (SH_ByteSequence*)0);
 
 	if (n > SH_BYTESEQUENCE_LENGTH_MAX) {
 		__raise(err, SH_E_BYTESEQUENCE_TOO_LONG);
@@ -41,6 +42,7 @@ SH_ByteSequence__init(sh_byte_t* value, size_t n, int* err) {
 
 void
 SH_ByteSequence__destroy(SH_ByteSequence* obj, int* err) {
+	__cascade(err,);
 	if ((sh_byte_t*)0 != obj->value) {
 		free(obj->value);
 	}
@@ -51,6 +53,7 @@ SH_ByteSequence__destroy(SH_ByteSequence* obj, int* err) {
 /*
 sh_char_t*
 SH_ByteSequence__bytes(SH_ByteSequence* obj, int* err) {
+	__cascade(err, (sh_char_t*)0);
 	__clear(err);
 	return obj->value;
 }
@@ -58,6 +61,7 @@ SH_ByteSequence__bytes(SH_ByteSequence* obj, int* err) {
 
 size_t
 SH_ByteSequence__length(SH_ByteSequence* obj, int* err) {
+	__cascade(err, (size_t)0);
 	__clear(err);
 	return obj->length;
 }
@@ -82,6 +86,8 @@ SH_ByteSequence__to_s(SH_ByteSequence* obj, int* err) {
 
 	sh_char_t* str;
 	sh_char_t* ptr;
+
+	__cascade(err, (sh_char_t*)0);
 
 	size = (obj->length * 4 + 2) / 3; /* 3in -> 4out */
 	str = (sh_char_t*)malloc(sizeof(sh_char_t) * (size + 3));

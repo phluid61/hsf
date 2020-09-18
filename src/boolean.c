@@ -5,13 +5,15 @@
 
 #include <stdlib.h>
 
-#define __clear(v)      { if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR; }
-#define __raise(v,code) { if ((int*)0 != (v)) *(v) = (code); }
+#include "error_macros.h"
 
 /* malloc */
 SH_Boolean*
 SH_Boolean__init(sh_bool_t value, int* err) {
 	SH_Boolean* obj = (SH_Boolean*)malloc(sizeof(SH_Boolean));
+
+	__cascade(err, (SH_Boolean*)0);
+
 	if ((SH_Boolean*)0 == obj) {
 		__raise(err, SH_E_MALLOC_ERROR);
 		return (SH_Boolean*)0;
@@ -25,24 +27,28 @@ SH_Boolean__init(sh_bool_t value, int* err) {
 
 void
 SH_Boolean__destroy(SH_Boolean* obj, int* err) {
+	__cascade(err,);
 	free(obj);
 	__clear(err);
 }
 
 sh_bool_t
 SH_Boolean__bool(SH_Boolean* obj, int* err) {
+	__cascade(err, SH_FALSE);
 	__clear(err);
 	return obj->value;
 }
 
 sh_bool_t
 SH_Boolean__true(SH_Boolean* obj, int* err) {
+	__cascade(err, SH_FALSE);
 	__clear(err);
 	return (obj->value == SH_FALSE) ? SH_FALSE : SH_TRUE;
 }
 
 sh_bool_t
 SH_Boolean__false(SH_Boolean* obj, int* err) {
+	__cascade(err, SH_FALSE);
 	__clear(err);
 	return (obj->value == SH_FALSE) ? SH_TRUE : SH_FALSE;
 }
@@ -51,6 +57,9 @@ SH_Boolean__false(SH_Boolean* obj, int* err) {
 sh_char_t*
 SH_Boolean__to_s(SH_Boolean* obj, int* err) {
 	sh_char_t* str = (sh_char_t*)malloc(sizeof(sh_char_t) * 3);
+
+	__cascade(err, (sh_char_t*)0);
+
 	if ((sh_char_t*)0 == str) {
 		__raise(err, SH_E_MALLOC_ERROR);
 		return (sh_char_t*)0;

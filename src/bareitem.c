@@ -12,11 +12,12 @@
 
 #include <stdint.h>
 
-#define __clear(v)      { if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR; }
-#define __raise(v,code) { if ((int*)0 != (v)) *(v) = (code); }
+#include "error_macros.h"
 
 #define do_init(t, p, err) {                         \
 	SH_BareItem* obj;                                \
+                                                     \
+	__cascade(err, (SH_BareItem*)0);                 \
                                                      \
 	obj = (SH_BareItem*)malloc(sizeof(SH_BareItem)); \
 	if ((SH_BareItem*)0 == obj) {                    \
@@ -73,6 +74,7 @@ SH_BareItem__init_boolean(SH_Boolean* value, int* err) {
 
 void
 SH_BareItem__destroy(SH_BareItem *obj, sh_bool_t recursive, int* err) {
+	__cascade(err,);
 	if (recursive) {
 		switch (obj->type) {
 		case SH_NULL:
@@ -123,11 +125,13 @@ SH_BareItem__destroy(SH_BareItem *obj, sh_bool_t recursive, int* err) {
 
 SH_Item_type
 SH_BareItem__type(SH_BareItem* obj, int* err) {
+	__cascade(err, obj->type);
 	__clear(err);
 	return obj->type;
 }
 
 #define do_get(obj, err, a, b) {            \
+	__cascade(err, (b*)0);                  \
 	if (a != (obj)->type) {                 \
 		__raise(err, SH_E_ITEM_WRONG_TYPE); \
 		return (b*)0;                       \
@@ -170,6 +174,7 @@ sh_char_t*
 SH_BareItem__to_s(SH_BareItem* obj, int* err) {
 	sh_char_t* str;
 
+	__cascade(err, (sh_char_t*)0);
 	switch (obj->type) {
 	case SH_NULL:
 		str = (sh_char_t*)malloc(sizeof(sh_char_t));

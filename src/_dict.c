@@ -22,12 +22,13 @@ SH_dict_bucket__destroy(SH_dict_bucket* obj, sh_bool_t recursive, int* err);
 void
 SH_dict_bucket__add(SH_dict_bucket* obj, SH_dict_pair* pair, int* err);
 
-#define __clear(v)      { if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR; }
-#define __raise(v,code) { if ((int*)0 != (v)) *(v) = (code); }
+#include "error_macros.h"
 
 SH_dict_pair*
 SH_dict_pair__init(SH_Key* key, SH_Item* value, int* err) {
 	SH_dict_pair* obj;
+
+	__cascade(err, (SH_dict_pair*)0);
 
 	obj = (SH_dict_pair*)malloc(sizeof(SH_dict_pair));
 	if ((SH_dict_pair*)0 == obj) {
@@ -44,6 +45,7 @@ SH_dict_pair__init(SH_Key* key, SH_Item* value, int* err) {
 
 void
 SH_dict_pair__destroy(SH_dict_pair* obj, sh_bool_t recursive, int* err) {
+	__cascade(err,);
 	if (recursive) {
 		SH_Key__destroy(obj->key, err);
 		SH_Item__destroy(obj->value, recursive, err);
@@ -55,6 +57,8 @@ SH_dict_pair__destroy(SH_dict_pair* obj, sh_bool_t recursive, int* err) {
 SH_dict_bucket*
 SH_dict_bucket__init(int *err) {
 	SH_dict_bucket* obj;
+
+	__cascade(err, (SH_dict_bucket*)0);
 
 	obj = (SH_dict_bucket*)calloc(sizeof(SH_dict_bucket), 1);
 	if ((SH_dict_bucket*)0 == obj) {
@@ -68,6 +72,7 @@ SH_dict_bucket__init(int *err) {
 
 void
 SH_dict_bucket__destroy(SH_dict_bucket* obj, sh_bool_t recursive, int* err) {
+	__cascade(err,);
 	if ((SH_dict_bucket*)0 != obj->next) {
 		SH_dict_bucket__destroy(obj->next, recursive, err);
 	}
@@ -81,6 +86,7 @@ SH_dict_bucket__destroy(SH_dict_bucket* obj, sh_bool_t recursive, int* err) {
 
 void
 SH_dict_bucket__add(SH_dict_bucket* obj, SH_dict_pair* pair, int* err) {
+	__cascade(err,);
 	while (obj->num >= SH_dict_bucket_size) {
 		if ((SH_dict_bucket*)0 == obj->next) {
 			obj->next = SH_dict_bucket__init(err);
@@ -98,6 +104,8 @@ SH_dict*
 SH_dict__init(int* err) {
 	SH_dict* obj;
 
+	__cascade(err, (SH_dict*)0);
+
 	obj = (SH_dict*)calloc(sizeof(SH_dict), 1);
 	if ((SH_dict*)0 == obj) {
 		__raise(err, SH_E_MALLOC_ERROR);
@@ -110,6 +118,7 @@ SH_dict__init(int* err) {
 
 void
 SH_dict__destroy(SH_dict* obj, sh_bool_t recursive, int* err) {
+	__cascade(err,);
 	if ((SH_dict_bucket*)0 != obj->_list) {
 		SH_dict_bucket__destroy(obj->_list, recursive, err);
 	}
@@ -126,6 +135,8 @@ SH_dict__get(SH_dict* obj, SH_Key* key, int* err) {
 
 	hash = SH_Key__hash(key, err);
 	bucket = obj->_hash[hash];
+
+	__cascade(err, (SH_Item*)0);
 
 	while ((SH_dict_bucket*)0 != bucket) {
 		for (i = 0; /*i < SH_dict_bucket_size &&*/ i < bucket->num; i++) {
@@ -148,6 +159,8 @@ void
 SH_dict__add(SH_dict* obj, SH_Key* key, SH_Item* value, int* err) {
 	SH_dict_pair* pair;
 	uint8_t hash;
+
+	__cascade(err,);
 
 	pair = SH_dict_pair__init(key, value, err);
 	if (err) return;

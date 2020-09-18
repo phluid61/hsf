@@ -5,13 +5,14 @@
 
 #include <stdlib.h>
 
-#define __clear(v)      if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR;
-#define __raise(v,code) if ((int*)0 != (v)) *(v) = (code);
+#include "error_macros.h"
 
 /* malloc */
 SH_Integer*
 SH_Integer__init(sh_int_t value, int* err) {
 	SH_Integer* obj;
+
+	__cascade(err, (SH_Integer*)0);
 
 	if (value < SH_INT_MIN || value > SH_INT_MAX) {
 		__raise(err, SH_E_INTEGER_OUT_OF_BOUNDS);
@@ -32,24 +33,28 @@ SH_Integer__init(sh_int_t value, int* err) {
 
 void
 SH_Integer__destroy(SH_Integer* obj, int* err) {
+	__cascade(err,);
 	free(obj);
 	__clear(err);
 }
 
 sh_int_t
 SH_Integer__int(SH_Integer* obj, int* err) {
+	__cascade(err, SH_INT_C(0));
 	__clear(err);
 	return obj->value;
 }
 
 sh_bool_t
 SH_Integer__negative(SH_Integer* obj, int* err) {
+	__cascade(err, SH_FALSE);
 	__clear(err);
 	return (sh_bool_t)(obj->value < SH_INT_C(0));
 }
 
 sh_int_t
 SH_Integer__abs(SH_Integer* obj, int* err) {
+	__cascade(err, SH_INT_C(0));
 	if (SH_Integer__negative(obj, err)) {
 		__clear(err);
 		return -(obj->value);
@@ -67,6 +72,8 @@ SH_Integer__to_s(SH_Integer* obj, int* err) {
 	sh_char_t  buffer[17]; /* sign(1) + digits(15) + null(1) */
 	size_t n;
 	sh_int_t v;
+
+	__cascade(err, (sh_char_t*)0);
 
 	if (obj->value == SH_INT_C(0)) {
 		str = (sh_char_t*)malloc(sizeof(sh_char_t) * 2);

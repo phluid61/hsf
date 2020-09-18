@@ -6,8 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define __clear(v)      if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR;
-#define __raise(v,code) if ((int*)0 != (v)) *(v) = (code);
+#include "error_macros.h"
 
 /* malloc */
 SH_Key*
@@ -16,6 +15,8 @@ SH_Key__init(sh_char_t* value, size_t n, int* err) {
 	sh_char_t* ptr;
 	sh_char_t  c;
 	size_t m;
+
+	__cascade(err, (SH_Key*)0);
 
 	if (n < 1 || n > SH_KEY_LENGTH_MAX) {
 		__raise(err, SH_E_KEY_TOO_LONG);
@@ -65,6 +66,7 @@ SH_Key__init(sh_char_t* value, size_t n, int* err) {
 
 void
 SH_Key__destroy(SH_Key* obj, int* err) {
+	__cascade(err,);
 	if ((sh_char_t*)0 != obj->value) {
 		free(obj->value);
 	}
@@ -75,6 +77,7 @@ SH_Key__destroy(SH_Key* obj, int* err) {
 /*
 sh_char_t*
 SH_Key__value(SH_Key* obj, int* err) {
+	__cascade(err, (sh_char_t*)0);
 	__clear(err);
 	return obj->value;
 }
@@ -85,6 +88,8 @@ SH_Key__hash(SH_Key* obj, int* err) {
 	size_t buflen;
 	uint8_t* ptr;
 	uint8_t hsh = UINT8_C(1);
+
+	__cascade(err, UINT8_C(0));
 
 	buflen = obj->length; /* assumes sizeof(uint8_t) and sizeof(sh_char_t) are both 1 */
 	ptr = (uint8_t*)(obj->value);
@@ -102,6 +107,8 @@ SH_Key__hash(SH_Key* obj, int* err) {
 sh_bool_t
 SH_Key__equal(SH_Key* obj, SH_Key* other, int* err) {
 	size_t i;
+
+	__cascade(err, SH_FALSE);
 
 	if (obj->length != other->length) {
 		__clear(err);
@@ -123,6 +130,8 @@ SH_Key__equal(SH_Key* obj, SH_Key* other, int* err) {
 sh_char_t*
 SH_Key__to_s(SH_Key* obj, int* err) {
 	sh_char_t* str;
+
+	__cascade(err, (sh_char_t*)0);
 
 	str = (sh_char_t*)malloc(sizeof(sh_char_t) * (obj->length + 1)); /*FIXME*/
 	if ((sh_char_t*)0 == str) {

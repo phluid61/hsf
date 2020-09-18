@@ -7,8 +7,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#define __clear(v)      if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR;
-#define __raise(v,code) if ((int*)0 != (v)) *(v) = (code);
+#include "error_macros.h"
 
 /* FIXME: these don't work with non-ASCII (high-bit set) chars */
 
@@ -31,6 +30,8 @@ SH_Token__init(sh_char_t* value, size_t n, int* err) {
 	sh_char_t* ptr;
 	sh_char_t  c;
 	size_t m;
+
+	__cascade(err, (SH_Token*)0);
 
 	if (n < 1 || n > SH_TOKEN_LENGTH_MAX) {
 		__raise(err, SH_E_TOKEN_TOO_LONG);
@@ -79,6 +80,7 @@ SH_Token__init(sh_char_t* value, size_t n, int* err) {
 
 void
 SH_Token__destroy(SH_Token* obj, int* err) {
+	__cascade(err,);
 	if ((sh_char_t*)0 != obj->value) {
 		free(obj->value);
 	}
@@ -89,6 +91,7 @@ SH_Token__destroy(SH_Token* obj, int* err) {
 /*
 sh_char_t*
 SH_Token__string(SH_Token* obj, int* err) {
+	__cascade(err, (sh_char_t*)0);
 	__clear(err);
 	return obj->value;
 }
@@ -98,6 +101,8 @@ SH_Token__string(SH_Token* obj, int* err) {
 sh_char_t*
 SH_Token__to_s(SH_Token* obj, int* err) {
 	sh_char_t* str;
+
+	__cascade(err, (sh_char_t*)0);
 
 	str = (sh_char_t*)malloc(sizeof(sh_char_t) * (obj->length + 1));
 	if ((sh_char_t*)0 == str) {

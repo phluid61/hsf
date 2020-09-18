@@ -5,6 +5,7 @@
 #include "lib/types.h"
 #include "lib/errors.h"
 #include "lib/_dict.h"
+#include "lib/key.h"
 #include "lib/item.h"
 #include "lib/bareitem.h"
 #include "lib/integer.h"
@@ -33,7 +34,7 @@ int main() {
 	sh_char_t unterminated_string[4] = {SH_CHAR_C('"'), SH_CHAR_C('\\'), SH_CHAR_C(0x20), SH_CHAR_C(0x7E)};
 	sh_char_t unterminated_token[4] = {SH_CHAR_C('*'), SH_CHAR_C('#'), SH_CHAR_C(0x24), SH_CHAR_C(0x60)};
 	sh_byte_t unterminated_bytes[6] = {SH_BYTE_C(0), SH_BYTE_C(1), SH_BYTE_C(0x7E), SH_BYTE_C(0x7F), SH_BYTE_C(0xFE), SH_BYTE_C(0xFF)};
-
+/*
 	do_sh_null();
 
 	printf("%c[32m === INTEGER ==============%c[0m\n", 0x1b, 0x1b);
@@ -85,7 +86,7 @@ int main() {
 	do_sh_boolean(SH_TRUE);
 	do_sh_boolean(SH_FALSE);
 	do_sh_boolean(SH_BOOL_C(42));
-
+*/
 	printf("%c[32m === PARAMETERS ===========%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_item();
@@ -432,6 +433,30 @@ void do_sh_boolean(sh_bool_t value) {
 	}
 }
 
+void __do_sh_item(SH_Item* obj) {
+	int err;
+
+	SH_Key  *key1, *key2, *key3;
+	SH_Item *val1, *val2, *val3;
+
+	key1 = SH_Key__init((unsigned char*)"key1", 4, &err);
+	val1 = SH_Item__init(SH_BareItem__init_boolean(SH_Boolean__init(SH_TRUE, &err), &err), 0, &err);
+
+	SH_Item__add_param(obj, key1, val1, &err);
+
+	key2 = SH_Key__init((unsigned char*)"k2", 2, &err);
+	val2 = SH_Item__init(SH_BareItem__init_boolean(SH_Boolean__init(SH_FALSE, &err), &err), 0, &err);
+
+	SH_Item__add_param(obj, key2, val2, &err);
+
+	key3 = SH_Key__init((unsigned char*)"foo", 2, &err);
+	val3 = SH_Item__init(SH_BareItem__init_integer(SH_Integer__init(1234, &err), &err), 0, &err);
+
+	SH_Item__add_param(obj, key3, val3, &err);
+
+	/*do_sh_bareitem(SH_Item__item(obj, 0));*/
+}
+
 void do_sh_item() {
 	sh_int_t value = SH_INT_C(1);
 
@@ -460,6 +485,8 @@ void do_sh_item() {
 				printf("    * unable to init SH_Item: [%llX] 0x%08X\n", (long long)item, err);
 			} else {
 				printf("    + init SH_Item: [%llX]\n", (long long)item);
+				__do_sh_item(item);
+
 				SH_Item__destroy(item, SH_FALSE, 0);
 			}
 
@@ -475,6 +502,8 @@ void do_sh_item() {
 					printf("      * unable to init SH_Item: [%llX] 0x%08X\n", (long long)item, err);
 				} else {
 					printf("      + init SH_Item: [%llX]\n", (long long)item);
+					__do_sh_item(item);
+
 					SH_Item__destroy(item, SH_FALSE, 0);
 				}
 

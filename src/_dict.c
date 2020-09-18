@@ -7,6 +7,21 @@
 
 #include <stdint.h>
 
+SH_dict_pair*
+SH_dict_pair__init(SH_Key* key, SH_Item* value, int* err);
+
+void
+SH_dict_pair__destroy(SH_dict_pair* obj, sh_bool_t recursive, int* err);
+
+SH_dict_bucket*
+SH_dict_bucket__init(int* err);
+
+void
+SH_dict_bucket__destroy(SH_dict_bucket* obj, sh_bool_t recursive, int* err);
+
+void
+SH_dict_bucket__add(SH_dict_bucket* obj, SH_dict_pair* pair, int* err);
+
 #define __clear(v)      { if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR; }
 #define __raise(v,code) { if ((int*)0 != (v)) *(v) = (code); }
 

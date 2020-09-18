@@ -23,6 +23,7 @@ DEPS  = $(SRCDIR)/types.h $(SRCDIR)/errors.h
 
 _dict_DEPS    = $(SRCDIR)/key.h $(SRCDIR)/item.h
 bareitem_DEPS = $(SRCDIR)/integer.h $(SRCDIR)/decimal.h $(SRCDIR)/string.h $(SRCDIR)/token.h $(SRCDIR)/bytesequence.h $(SRCDIR)/boolean.h
+item_DEPS     = $(SRCDIR)/_dict.h $(_dict_DEPS) $(SRCDIR)/bareitem.h $(bareitem_DEPS)
 
 .PHONY: all
 all: lib main
@@ -52,7 +53,7 @@ $(LIBDIR)/%.h: $(SRCDIR)/%.h
 
 main.o: main.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
-main: main.o $(LIBS)
+main: main.o $(OBJECTS)
 	$(LINK.o) -o $@ $^ -lm
 .PHONY: run
 run: main
@@ -60,7 +61,8 @@ run: main
 
 ### META-RULES
 
-.PHONY: lib clean
+.PHONY: obj lib clean
+obj: $(HEADERS) $(OBJECTS)
 lib: $(HEADERS) $(LIBS)
 clean:
 	-rm -f $(OBJECTS) $(LIBS) $(HEADERS) main.o main

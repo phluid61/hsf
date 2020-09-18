@@ -62,4 +62,9 @@ SH_Item__params(SH_Item* obj, int* err) {
 	return obj->params;
 }
 
+void
+SH_Item__add_param(SH_Item* obj, SH_Key* key, SH_Item* item, int* err) {
+	SH_dict__add(obj->params, key, item, err);
+}
+
 /* vim: set ts=4 sts=4 sw=4: */

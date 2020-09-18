@@ -17,5 +17,9 @@ SH_Item__item(SH_Item* obj, int* err);
 SH_dict*
 SH_Item__params(SH_Item* obj, int* err);
 
+void
+SH_Item__add_param(SH_Item* obj, SH_Key* key, SH_Item* item, int* err);
+
+
 #endif
 /* vim: set ts=4 sts=4 sw=4: */

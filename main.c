@@ -4,6 +4,7 @@
 
 #include "lib/types.h"
 #include "lib/errors.h"
+#include "lib/_dict.h"
 #include "lib/item.h"
 #include "lib/bareitem.h"
 #include "lib/integer.h"
@@ -438,6 +439,8 @@ void do_sh_item() {
 	SH_BareItem* bi;
 	SH_Item* item;
 
+	SH_dict* params;
+
 	int err;
 
 	obj = SH_Integer__init(value, &err);
@@ -450,6 +453,8 @@ void do_sh_item() {
 			printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
 		} else {
 			printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
+
+			printf("  --- create an item without any parameters -----\n");
 			item = SH_Item__init(bi, (SH_dict*)0, &err);
 			if ((SH_Item*)0 == item || err) {
 				printf("    * unable to init SH_Item: [%llX] 0x%08X\n", (long long)item, err);
@@ -457,6 +462,25 @@ void do_sh_item() {
 				printf("    + init SH_Item: [%llX]\n", (long long)item);
 				SH_Item__destroy(item, SH_FALSE, 0);
 			}
+
+			printf("  --- create an item with explicit parameters ---\n");
+			params = SH_dict__init(&err);
+			if ((SH_dict*)0 == params || err) {
+				printf("    * unable to init SH_dict: [%llX] 0x%08X\n", (long long)params, err);
+			} else {
+				printf("    + init SH_dict: [%llX]\n", (long long)params);
+
+				item = SH_Item__init(bi, params, &err);
+				if ((SH_Item*)0 == item || err) {
+					printf("      * unable to init SH_Item: [%llX] 0x%08X\n", (long long)item, err);
+				} else {
+					printf("      + init SH_Item: [%llX]\n", (long long)item);
+					SH_Item__destroy(item, SH_FALSE, 0);
+				}
+
+				SH_dict__destroy(params, SH_FALSE, 0);
+			}
+
 			SH_BareItem__destroy(bi, SH_FALSE, 0);
 		}
 

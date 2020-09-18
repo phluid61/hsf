@@ -185,24 +185,38 @@ SH_dict__add(SH_dict* obj, SH_Key* key, SH_Item* value, int* err) {
 	__cascade(err,); /* FIXME are we left in a broken state? */
 }
 
+#define __each(obj, err, ...) {                  \
+	SH_dict_bucket* bucket;                      \
+	SH_dict_pair* pair;                          \
+	size_t i;                                    \
+                                                 \
+	__cascade(err,);                             \
+                                                 \
+	bucket = obj->_list;                         \
+	while ((SH_dict_bucket*)0 != bucket) {       \
+		for (i = 0; i < bucket->num; i++) {      \
+			pair = bucket->pairs[i];             \
+			/* pass the item to the callback */  \
+			(*func)(__VA_ARGS__, err);           \
+			__cascade(err,);                     \
+		}                                        \
+		bucket = bucket->next;                   \
+	}                                            \
+}
+
+void
+SH_dict__each(SH_dict* obj, void (*func)(SH_Key* key, SH_Item* item, int* err), int* err) {
+	__each(obj, err, pair->key, pair->value);
+}
+
+void
+SH_dict__each_key(SH_dict* obj, void (*func)(SH_Key* key, int* err), int* err) {
+	__each(obj, err, pair->key);
+}
+
 void
 SH_dict__each_item(SH_dict* obj, void (*func)(SH_Item* item, int* err), int* err) {
-	SH_dict_bucket* bucket;
-	SH_dict_pair* pair;
-	size_t i;
-
-	__cascade(err,);
-
-	bucket = obj->_list;
-	while ((SH_dict_bucket*)0 != bucket) {
-		for (i = 0; i < bucket->num; i++) {
-			pair = bucket->pairs[i];
-			/* pass the item to the callback */
-			(*func)(pair->value, err);
-			__cascade(err,);
-		}
-		bucket = bucket->next;
-	}
+	__each(obj, err, pair->value);
 }
 
 /* vim: set ts=4 sts=4 sw=4: */

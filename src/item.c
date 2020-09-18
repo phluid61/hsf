@@ -22,7 +22,7 @@ SH_Item__init(SH_BareItem* item, SH_dict* params, int* err) {
 
 	if ((SH_dict*)0 == params) {
 		params = SH_dict__init(err);
-		if (err) {
+		if (*err) {
 			free(obj);
 			return (SH_Item*)0;
 		}

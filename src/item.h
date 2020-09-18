@@ -8,6 +8,9 @@
 SH_Item*
 SH_Item__init(SH_BareItem* item, SH_dict* params, int* err);
 
+void
+SH_Item__destroy(SH_Item* obj, sh_bool_t recursive, int* err);
+
 SH_BareItem*
 SH_Item__item(SH_Item* obj, int* err);
 

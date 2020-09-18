@@ -10,9 +10,6 @@
 #define __clear(v)      { if ((int*)0 != (v)) *(v) = SH_E_NO_ERROR; }
 #define __raise(v,code) { if ((int*)0 != (v)) *(v) = (code); }
 
-#define do_init(t, p, err) {                             \
-}
-
 SH_Item*
 SH_Item__init(SH_BareItem* item, SH_dict* params, int* err) {
 	SH_Item* obj;
@@ -36,6 +33,21 @@ SH_Item__init(SH_BareItem* item, SH_dict* params, int* err) {
 
 	__clear(err);
 	return obj;
+}
+
+void
+SH_Item__destroy(SH_Item *obj, sh_bool_t recursive, int* err) {
+	int local_err1 = SH_E_NO_ERROR;
+	int local_err2 = SH_E_NO_ERROR;
+	if (recursive) {
+		SH_BareItem__destroy(obj->item, recursive, &local_err1);
+		SH_dict__destroy(obj->params, recursive, &local_err2);
+		free(obj);
+		__raise(err, (SH_E_NO_ERROR == local_err1) ? local_err2 : local_err1);
+	} else {
+		free(obj);
+		__clear(err);
+	}
 }
 
 SH_BareItem*

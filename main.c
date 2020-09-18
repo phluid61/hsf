@@ -4,6 +4,7 @@
 
 #include "lib/types.h"
 #include "lib/errors.h"
+#include "lib/item.h"
 #include "lib/bareitem.h"
 #include "lib/integer.h"
 #include "lib/decimal.h"
@@ -24,6 +25,7 @@ void do_sh_string(sh_char_t* value, size_t n);
 void do_sh_token(sh_char_t* value, size_t n);
 void do_sh_bytesequence(sh_byte_t* value, size_t n);
 void do_sh_boolean(sh_bool_t value);
+void do_sh_item();
 
 int main() {
 
@@ -82,6 +84,10 @@ int main() {
 	do_sh_boolean(SH_TRUE);
 	do_sh_boolean(SH_FALSE);
 	do_sh_boolean(SH_BOOL_C(42));
+
+	printf("%c[32m === PARAMETERS ===========%c[0m\n", 0x1b, 0x1b);
+
+	do_sh_item();
 
 	return 0;
 }
@@ -422,6 +428,39 @@ void do_sh_boolean(sh_bool_t value) {
 		}
 
 		SH_Boolean__destroy(obj, 0);
+	}
+}
+
+void do_sh_item() {
+	sh_int_t value = SH_INT_C(1);
+
+	SH_Integer* obj;
+	SH_BareItem* bi;
+	SH_Item* item;
+
+	int err;
+
+	obj = SH_Integer__init(value, &err);
+	if ((SH_Integer*)0 == obj || err) {
+		printf("* unable to init SH_Integer(%lld): [%llX] 0x%08X\n", (long long)value, (long long)obj, err);
+	} else {
+		printf("+ init SH_Integer(%lld): [%llX]\n", (long long)value, (long long)obj);
+		bi = SH_BareItem__init_integer(obj, &err);
+		if ((SH_BareItem*)0 == bi || err) {
+			printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
+		} else {
+			printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
+			item = SH_Item__init(bi, (SH_dict*)0, &err);
+			if ((SH_Item*)0 == item || err) {
+				printf("    * unable to init SH_Item: [%llX] 0x%08X\n", (long long)item, err);
+			} else {
+				printf("    + init SH_Item: [%llX]\n", (long long)item);
+				SH_Item__destroy(item, SH_FALSE, 0);
+			}
+			SH_BareItem__destroy(bi, SH_FALSE, 0);
+		}
+
+		SH_Integer__destroy(obj, 0);
 	}
 }
 

@@ -34,7 +34,7 @@ int main() {
 	sh_char_t unterminated_string[4] = {SH_CHAR_C('"'), SH_CHAR_C('\\'), SH_CHAR_C(0x20), SH_CHAR_C(0x7E)};
 	sh_char_t unterminated_token[4] = {SH_CHAR_C('*'), SH_CHAR_C('#'), SH_CHAR_C(0x24), SH_CHAR_C(0x60)};
 	sh_byte_t unterminated_bytes[6] = {SH_BYTE_C(0), SH_BYTE_C(1), SH_BYTE_C(0x7E), SH_BYTE_C(0x7F), SH_BYTE_C(0xFE), SH_BYTE_C(0xFF)};
-/*
+
 	do_sh_null();
 
 	printf("%c[32m === INTEGER ==============%c[0m\n", 0x1b, 0x1b);
@@ -86,7 +86,7 @@ int main() {
 	do_sh_boolean(SH_TRUE);
 	do_sh_boolean(SH_FALSE);
 	do_sh_boolean(SH_BOOL_C(42));
-*/
+
 	printf("%c[32m === PARAMETERS ===========%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_item();
@@ -99,7 +99,7 @@ void do_sh_bareitem(SH_BareItem* obj) {
 	sh_char_t* s;
 	void* x;
 
-	int err;
+	int err = 0;
 
 	t = SH_BareItem__type(obj, 0);
 	printf("    - type =: %u\n", (unsigned int)t);
@@ -135,7 +135,7 @@ void do_sh_bareitem(SH_BareItem* obj) {
 void do_sh_null() {
 	SH_BareItem* bi;
 
-	int err;
+	int err = 0;
 
 	printf("+ NULL item\n");
 
@@ -157,7 +157,7 @@ void do_sh_integer(sh_int_t value) {
 	sh_bool_t b;
 	sh_char_t* s;
 
-	int err;
+	int err = 0;
 
 	obj = SH_Integer__init(value, &err);
 	if ((SH_Integer*)0 == obj || err) {
@@ -206,7 +206,7 @@ void do_sh_decimal(sh_float_t value) {
 	uint16_t u;
 	sh_char_t* s;
 
-	int err;
+	int err = 0;
 
 	obj = SH_Decimal__init(value, &err);
 	if ((SH_Decimal*)0 == obj || err) {
@@ -261,7 +261,7 @@ void do_sh_string(sh_char_t* value, size_t n) {
 	uint16_t u;
 	sh_char_t* s;
 
-	int err;
+	int err = 0;
 
 	snprintf(template, 8, "%%%lus", n);
 
@@ -309,7 +309,7 @@ void do_sh_token(sh_char_t* value, size_t n) {
 
 	sh_char_t* s;
 
-	int err;
+	int err = 0;
 
 	snprintf(template, 8, "%%%lus", n);
 
@@ -352,7 +352,7 @@ void do_sh_bytesequence(sh_byte_t* value, size_t n) {
 	uint16_t u;
 	sh_char_t* s;
 
-	int err;
+	int err = 0;
 
 	obj = SH_ByteSequence__init(value, n, &err);
 	if ((SH_ByteSequence*)0 == obj || err) {
@@ -394,7 +394,7 @@ void do_sh_boolean(sh_bool_t value) {
 	sh_bool_t b;
 	sh_char_t* s;
 
-	int err;
+	int err = 0;
 
 	obj = SH_Boolean__init(value, &err);
 	if ((SH_Boolean*)0 == obj || err) {
@@ -433,53 +433,92 @@ void do_sh_boolean(sh_bool_t value) {
 	}
 }
 
+/***** everything from here down is experimental *****/
+
+void __display_inner_item(SH_Key* key, SH_Item* obj, int* err) {
+	sh_char_t* s;
+
+	s = SH_Key__to_s(key, err);
+	if ((sh_char_t*)0 == s) {
+		printf(";<<ERR:%08x>>", *err);
+	} else {
+		printf(";%s", s);
+	}
+
+	s = SH_BareItem__to_s(obj->item, err);
+	if ((sh_char_t*)0 == s) {
+		printf("=<<ERR:%08x>>", *err);
+	} else {
+		printf("=%s", s);
+	}
+}
+/* FIXME: should be SH_Item__to_s() */
+void __display_item(SH_Item* obj) {
+	int err = 0;
+	sh_char_t* s;
+
+	s = SH_BareItem__to_s(obj->item, &err);
+	if ((sh_char_t*)0 == s) {
+		printf("<<ERR:%08x>>", err);
+	} else {
+		printf("%s", s);
+	}
+	SH_dict__each(obj->params, &__display_inner_item, &err);
+	printf("\n");
+}
 void __do_sh_item(SH_Item* obj) {
-	int err;
+	int err = 0;
 
 	SH_Key  *key1, *key2, *key3;
 	SH_Item *val1, *val2, *val3;
+
+	__display_item(obj);
 
 	key1 = SH_Key__init((unsigned char*)"key1", 4, &err);
 	val1 = SH_Item__init(SH_BareItem__init_boolean(SH_Boolean__init(SH_TRUE, &err), &err), 0, &err);
 
 	SH_Item__add_param(obj, key1, val1, &err);
+	__display_item(obj);
 
 	key2 = SH_Key__init((unsigned char*)"k2", 2, &err);
 	val2 = SH_Item__init(SH_BareItem__init_boolean(SH_Boolean__init(SH_FALSE, &err), &err), 0, &err);
 
 	SH_Item__add_param(obj, key2, val2, &err);
+	__display_item(obj);
 
-	key3 = SH_Key__init((unsigned char*)"foo", 2, &err);
+	key3 = SH_Key__init((unsigned char*)"three", 5, &err);
 	val3 = SH_Item__init(SH_BareItem__init_integer(SH_Integer__init(1234, &err), &err), 0, &err);
 
 	SH_Item__add_param(obj, key3, val3, &err);
-
-	/*do_sh_bareitem(SH_Item__item(obj, 0));*/
+	__display_item(obj);
 }
 
 void do_sh_item() {
-	sh_int_t value = SH_INT_C(1);
+	sh_char_t value[4] = "foo";
 
-	SH_Integer* obj;
+	SH_Token* obj;
 	SH_BareItem* bi;
 	SH_Item* item;
 
 	SH_dict* params;
 
-	int err;
+	SH_Key  *key1;
+	SH_Item *val1;
 
-	obj = SH_Integer__init(value, &err);
-	if ((SH_Integer*)0 == obj || err) {
-		printf("* unable to init SH_Integer(%lld): [%llX] 0x%08X\n", (long long)value, (long long)obj, err);
+	int err = 0;
+
+	obj = SH_Token__init(value, 3, &err);
+	if ((SH_Token*)0 == obj || err) {
+		printf("* unable to init SH_Token(%s): [%llX] 0x%08X\n", (char*)value, (long long)obj, err);
 	} else {
-		printf("+ init SH_Integer(%lld): [%llX]\n", (long long)value, (long long)obj);
-		bi = SH_BareItem__init_integer(obj, &err);
+		printf("+ init SH_Token(%s): [%llX]\n", (char*)value, (long long)obj);
+		bi = SH_BareItem__init_token(obj, &err);
 		if ((SH_BareItem*)0 == bi || err) {
 			printf("  * unable to init SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
 		} else {
 			printf("  + init SH_BareItem: [%llX]\n", (long long)bi);
 
-			printf("  --- create an item without any parameters -----\n");
+			printf("  %c[36m--- create an item without any parameters -----%c[0m\n", 0x1b, 0x1b);
 			item = SH_Item__init(bi, (SH_dict*)0, &err);
 			if ((SH_Item*)0 == item || err) {
 				printf("    * unable to init SH_Item: [%llX] 0x%08X\n", (long long)item, err);
@@ -490,7 +529,7 @@ void do_sh_item() {
 				SH_Item__destroy(item, SH_FALSE, 0);
 			}
 
-			printf("  --- create an item with explicit parameters ---\n");
+			printf("  %c[36m--- create an item with explicit parameters ---%c[0m\n", 0x1b, 0x1b);
 			params = SH_dict__init(&err);
 			if ((SH_dict*)0 == params || err) {
 				printf("    * unable to init SH_dict: [%llX] 0x%08X\n", (long long)params, err);
@@ -507,15 +546,45 @@ void do_sh_item() {
 					SH_Item__destroy(item, SH_FALSE, 0);
 				}
 
-				SH_dict__destroy(params, SH_FALSE, 0);
+				SH_dict__destroy(params, SH_TRUE, 0);
+			}
+
+			printf("  %c[36m--- create an item with defined parameters ----%c[0m\n", 0x1b, 0x1b);
+			params = SH_dict__init(&err);
+			if ((SH_dict*)0 == params || err) {
+				printf("    * unable to init SH_dict: [%llX] 0x%08X\n", (long long)params, err);
+			} else {
+				printf("    + init SH_dict: [%llX]\n", (long long)params);
+
+				/* FIXME: catch errors here: */
+				key1 = SH_Key__init((unsigned char*)"test", 4, &err);
+				val1 = SH_Item__init(SH_BareItem__init_integer(SH_Integer__init(SH_INT_C(42), &err), &err), 0, &err);
+				if (err) {
+					printf("      x [%llX]=[%llX] 0x%08X\n", (long long)key1, (long long)val1, err);
+				}
+				SH_dict__add(params, key1, val1, &err);
+
+				item = SH_Item__init(bi, params, &err);
+				if ((SH_Item*)0 == item || err) {
+					printf("      * unable to init SH_Item: [%llX] 0x%08X\n", (long long)item, err);
+				} else {
+					printf("      + init SH_Item: [%llX]\n", (long long)item);
+					__do_sh_item(item);
+
+					SH_Item__destroy(item, SH_FALSE, 0);
+				}
+
+				SH_dict__destroy(params, SH_TRUE, 0);
 			}
 
 			SH_BareItem__destroy(bi, SH_FALSE, 0);
 		}
 
-		SH_Integer__destroy(obj, 0);
+		SH_Token__destroy(obj, 0);
 	}
 }
+
+/***** everything from here up is experimental *****/
 
 const char hexdump_rule[72] = "+--------------------------------------------------+-------------------+";
 const char hexdump_line[72] = "|                                                  |                   |";

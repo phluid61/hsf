@@ -205,18 +205,18 @@ SH_dict__add(SH_dict* obj, SH_Key* key, SH_Item* value, int* err) {
 }
 
 void
-SH_dict__each(SH_dict* obj, void (*func)(SH_Key* key, SH_Item* item, int* err), int* err) {
-	__each(obj, err, pair->key, pair->value);
+SH_dict__each(SH_dict* obj, void (*func)(SH_Key* key, SH_Item* item, void* ptr, int* err), void* ptr, int* err) {
+	__each(obj, err, pair->key, pair->value, ptr);
 }
 
 void
-SH_dict__each_key(SH_dict* obj, void (*func)(SH_Key* key, int* err), int* err) {
-	__each(obj, err, pair->key);
+SH_dict__each_key(SH_dict* obj, void (*func)(SH_Key* key, void* ptr, int* err), void* ptr, int* err) {
+	__each(obj, err, pair->key, ptr);
 }
 
 void
-SH_dict__each_item(SH_dict* obj, void (*func)(SH_Item* item, int* err), int* err) {
-	__each(obj, err, pair->value);
+SH_dict__each_item(SH_dict* obj, void (*func)(SH_Item* item, void* ptr, int* err), void* ptr, int* err) {
+	__each(obj, err, pair->value, ptr);
 }
 
 /* vim: set ts=4 sts=4 sw=4: */

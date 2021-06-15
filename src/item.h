@@ -20,6 +20,10 @@ SH_Item__params(SH_Item* obj, int* err);
 void
 SH_Item__add_param(SH_Item* obj, SH_Key* key, SH_Item* item, int* err);
 
+/* malloc */
+sh_char_t*
+SH_Item__to_s(SH_Item* obj, int* err);
+
 
 #endif
 /* vim: set ts=4 sts=4 sw=4: */

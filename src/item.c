@@ -3,9 +3,11 @@
 #include "types.h"
 #include "errors.h"
 #include "bareitem.h"
+#include "key.h"
 #include "_dict.h"
 
 #include <stdint.h>
+#include <string.h>
 
 #include "error_macros.h"
 
@@ -69,6 +71,112 @@ SH_Item__params(SH_Item* obj, int* err) {
 void
 SH_Item__add_param(SH_Item* obj, SH_Key* key, SH_Item* item, int* err) {
 	SH_dict__add(obj->params, key, item, err);
+}
+
+#include <stdio.h>
+
+typedef
+struct __sh_item__string __sh_item__string;
+struct __sh_item__string {
+	size_t length;
+	size_t n;
+	sh_char_t* a[1024]; /* FIXME: magic number */
+};
+
+void
+__SH_Item__inner_item__to_s(SH_Key* key, SH_Item* obj, void* ptr, int* err) {
+	__sh_item__string* str;
+
+	sh_char_t* k; /* key string */
+	sh_char_t* o; /* obj string */
+
+	int local_err = SH_E_NO_ERROR;
+
+	__cascade(err,);
+
+	str = (__sh_item__string*)ptr;
+
+	k = SH_Key__to_s(key, &local_err);
+	if (local_err) {
+		__raise(err, local_err);
+		return;
+	}
+
+	o = SH_Item__to_s(obj, &local_err);
+	/*o = SH_BareItem__to_s(obj->item, &local_err);*/
+	if (local_err) {
+		free(k);
+		__raise(err, local_err);
+		return;
+	}
+
+	str->a[str->n ++] = k; str->length += strlen((const char*)k);
+	str->a[str->n ++] = o; str->length += strlen((const char*)o);
+}
+
+/* malloc */
+sh_char_t*
+SH_Item__to_s(SH_Item* obj, int* err) {
+	sh_char_t* obj_s;
+	sh_char_t* tmp_s;
+	sh_char_t* s;
+	sh_char_t* ptr;
+
+	size_t i;
+	size_t n;
+	size_t total;
+
+	__sh_item__string str;
+	str.length = (size_t)0;
+	str.n = (size_t)0;
+
+	obj_s = SH_BareItem__to_s(obj->item, err);
+	__cascade(err, (sh_char_t*)0);
+
+	SH_dict__each(obj->params, &__SH_Item__inner_item__to_s, (void*)(&str), err);
+	if (*err) {
+		free(obj_s);
+		for (i = 0; i < str.n; i++) {
+			free(str.a[i]);
+		}
+		__cascade(err, (sh_char_t*)0);
+	}
+
+	n = strlen((const char*)obj_s);
+
+	total = n;
+	total += str.length;
+	total += str.n; /* ';' and '=' for every pair */
+	total += 1; /* NULL */
+
+	s = (sh_char_t*)malloc(sizeof(sh_char_t) * total);
+	if ((sh_char_t*)0 == s) {
+		__raise(err, SH_E_MALLOC_ERROR);
+		return (sh_char_t*)0;
+	}
+
+	ptr = s;
+
+	if (n > 0) {
+		memcpy((void*)ptr, (const void*)obj_s, n);
+		free(obj_s);
+		ptr += n;
+	}
+
+	for (i = 0; i < str.n; i++) {
+		*ptr = (i % 2 ? SH_CHAR_C('=') : SH_CHAR_C(';'));
+		ptr ++;
+
+		tmp_s = str.a[i];
+		n = strlen((const char*)tmp_s);
+		memcpy((void*)ptr, (const void*)tmp_s, n);
+		free(str.a[i]);
+		ptr += n;
+	}
+
+	*ptr = SH_CHAR_C(0);
+
+	return s;
 }
 
 /* vim: set ts=4 sts=4 sw=4: */

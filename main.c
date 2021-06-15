@@ -435,36 +435,17 @@ void do_sh_boolean(sh_bool_t value) {
 
 /***** everything from here down is experimental *****/
 
-void __display_inner_item(SH_Key* key, SH_Item* obj, int* err) {
-	sh_char_t* s;
-
-	s = SH_Key__to_s(key, err);
-	if ((sh_char_t*)0 == s) {
-		printf(";<<ERR:%08x>>", *err);
-	} else {
-		printf(";%s", s);
-	}
-
-	s = SH_BareItem__to_s(obj->item, err);
-	if ((sh_char_t*)0 == s) {
-		printf("=<<ERR:%08x>>", *err);
-	} else {
-		printf("=%s", s);
-	}
-}
-/* FIXME: should be SH_Item__to_s() */
 void __display_item(SH_Item* obj) {
 	int err = 0;
 	sh_char_t* s;
 
-	s = SH_BareItem__to_s(obj->item, &err);
+	s = SH_Item__to_s(obj, &err);
 	if ((sh_char_t*)0 == s) {
-		printf("<<ERR:%08x>>", err);
+		printf("<<ERR:%08x>>\n", err);
 	} else {
-		printf("%s", s);
+		printf("%s\n", s);
+		free(s);
 	}
-	SH_dict__each(obj->params, &__display_inner_item, &err);
-	printf("\n");
 }
 void __do_sh_item(SH_Item* obj) {
 	int err = 0;

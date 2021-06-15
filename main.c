@@ -586,15 +586,15 @@ void do_sh_item() {
 
 /***** everything from here up is experimental *****/
 
-const char hexdump_rule[72] = "+--------------------------------------------------+-------------------+";
-const char hexdump_line[72] = "|                                                  |                   |";
+const char hexdump_rule[73] = "+--------------------------------------------------+-------------------+";
+const char hexdump_line[73] = "|                                                  |                   |";
 const char hexdump_char[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
 void hexdump_string(const sh_char_t* str) {
 	sh_char_t* ptr = (sh_char_t*)str;
 	int n = 0;
 	int i, j;
-	char line[72];
+	char line[73];
 
 	if ((sh_char_t*)0 == ptr) {
 		printf("NULL\n");
@@ -609,7 +609,7 @@ void hexdump_string(const sh_char_t* str) {
 
 	while (SH_CHAR_C(0) != *ptr) {
 		if (n == 0) {
-			memcpy((void*)line, (const void*)hexdump_line, sizeof(char)*72);
+			memcpy((void*)line, (const void*)hexdump_line, sizeof(char)*73);
 			i = 2;
 			j = 53;
 		}

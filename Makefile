@@ -26,7 +26,12 @@ bareitem_DEPS = $(SRCDIR)/integer.h $(SRCDIR)/decimal.h $(SRCDIR)/string.h $(SRC
 item_DEPS     = $(SRCDIR)/_dict.h $(_dict_DEPS) $(SRCDIR)/bareitem.h $(bareitem_DEPS)
 
 .PHONY: all
-all: lib main
+all: dirs lib main
+
+$(LIBDIR)/:
+	mkdir -p $@
+$(OBJDIR)/:
+	mkdir -p $@
 
 ### OBJECTS AND LIBRARIES
 
@@ -61,7 +66,8 @@ run: main
 
 ### META-RULES
 
-.PHONY: obj lib clean
+.PHONY: dirs obj lib clean
+dirs: $(LIBDIR)/ $(OBJDIR)/
 obj: $(HEADERS) $(OBJECTS)
 lib: $(HEADERS) $(LIBS)
 clean:

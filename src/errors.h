@@ -12,6 +12,8 @@
  *
  * key                              0x0020____
  *
+ * list                             0x0030____
+ *
  * sys err                          0x8000____
  */
 
@@ -35,6 +37,8 @@
 
 #define SH_E_KEY_TOO_LONG           0x00200001
 #define SH_E_KEY_BAD_CHAR           0x00200002
+
+#define SH_E_KEY_LIST_OVERFLOW      0x00300001
 
 /* errno */
 #define SH_E_MALLOC_ERROR           0x80000001

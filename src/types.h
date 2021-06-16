@@ -46,6 +46,8 @@ typedef struct SH_Key          SH_Key;
 typedef struct SH_String       SH_String;
 typedef struct SH_Token        SH_Token;
 
+typedef struct SH_List         SH_List;
+
 typedef struct SH_dict_pair   SH_dict_pair;
 typedef struct SH_dict_bucket SH_dict_bucket;
 typedef struct SH_dict        SH_dict;
@@ -93,6 +95,14 @@ struct SH_String {
 struct SH_Token {
 	sh_char_t *value;
 	size_t     length;
+};
+
+/* RFC 8941, 3.1 */
+#define SH_LIST_CAPACITY 1024
+
+struct SH_List {
+	SH_Item* _list[SH_LIST_CAPACITY];
+	size_t   count;
 };
 
 /* 8-bit hash = 256 buckets */

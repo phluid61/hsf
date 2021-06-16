@@ -9,7 +9,7 @@ OBJECTS :=
 LIBS    :=
 
 # Names of individual objects/modules
-NAMES = integer decimal string token bytesequence boolean bareitem item key _dict
+NAMES = integer decimal string token bytesequence boolean bareitem item key _dict list
 
 # Dependencies shared by all objects/modules
 DEPS  = $(SRCDIR)/types.h $(SRCDIR)/errors.h $(SRCDIR)/error_macros.h
@@ -24,6 +24,7 @@ DEPS  = $(SRCDIR)/types.h $(SRCDIR)/errors.h $(SRCDIR)/error_macros.h
 _dict_DEPS    = $(SRCDIR)/key.h $(SRCDIR)/item.h
 bareitem_DEPS = $(SRCDIR)/integer.h $(SRCDIR)/decimal.h $(SRCDIR)/string.h $(SRCDIR)/token.h $(SRCDIR)/bytesequence.h $(SRCDIR)/boolean.h
 item_DEPS     = $(SRCDIR)/_dict.h $(_dict_DEPS) $(SRCDIR)/bareitem.h $(bareitem_DEPS)
+list_DEPS     = $(SRCDIR)/item.h
 
 .PHONY: all
 all: dirs lib main

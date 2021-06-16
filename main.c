@@ -31,12 +31,21 @@ void do_sh_item();
 
 int main() {
 
+	#ifndef NO_STRING
 	sh_char_t unterminated_string[4] = {SH_CHAR_C('"'), SH_CHAR_C('\\'), SH_CHAR_C(0x20), SH_CHAR_C(0x7E)};
+	#endif
+	#ifndef NO_TOKEN
 	sh_char_t unterminated_token[4] = {SH_CHAR_C('*'), SH_CHAR_C('#'), SH_CHAR_C(0x24), SH_CHAR_C(0x60)};
+	#endif
+	#ifndef NO_BYTESEQ
 	sh_byte_t unterminated_bytes[6] = {SH_BYTE_C(0), SH_BYTE_C(1), SH_BYTE_C(0x7E), SH_BYTE_C(0x7F), SH_BYTE_C(0xFE), SH_BYTE_C(0xFF)};
+	#endif
 
+	#ifndef NO_NULL
 	do_sh_null();
+	#endif
 
+	#ifndef NO_INTEGER
 	printf("%c[32m === INTEGER ==============%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_integer(SH_INT_C(1));
@@ -48,7 +57,9 @@ int main() {
 	do_sh_integer(SH_INT_MIN);
 	do_sh_integer(SH_INT_MAX+1);
 	do_sh_integer(SH_INT_MIN-1);
+	#endif
 
+	#ifndef NO_DECIMAL
 	printf("%c[32m === DECIMAL ==============%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_decimal(SH_FLOAT_C(1.0));
@@ -62,34 +73,45 @@ int main() {
 	do_sh_decimal(SH_FLOAT_C(-123456789012.1234));
 	do_sh_decimal(SH_FLOAT_C(1000000000000.0));
 	do_sh_decimal(SH_FLOAT_C(-1000000000000.0));
+	#endif
 
+	#ifndef NO_STRING
 	printf("%c[32m === STRING ===============%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_string((sh_char_t*)"", 0);
 	do_sh_string((sh_char_t*)"ABCxyz012!", 10);
 	do_sh_string(unterminated_string, 4);
+	#endif
 
+	#ifndef NO_TOKEN
 	printf("%c[32m === TOKEN ================%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_token((sh_char_t*)"", 0);
 	do_sh_token((sh_char_t*)"foo123/456", 10);
 	do_sh_token(unterminated_token, 4);
+	#endif
 
+	#ifndef NO_BYTESEQ
 	printf("%c[32m === BYTE SEQUENCE ========%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_bytesequence((sh_byte_t*)"", 0);
 	do_sh_bytesequence((sh_byte_t*)"ABCxyz\00012!", 10);
 	do_sh_bytesequence(unterminated_bytes, 6);
+	#endif
 
+	#ifndef NO_BOOLEAN
 	printf("%c[32m === BOOLEAN ==============%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_boolean(SH_TRUE);
 	do_sh_boolean(SH_FALSE);
 	do_sh_boolean(SH_BOOL_C(42));
+	#endif
 
+	#ifndef NO_PARAMETERS
 	printf("%c[32m === PARAMETERS ===========%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_item();
+	#endif
 
 	return 0;
 }

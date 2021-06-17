@@ -14,6 +14,7 @@
 #include "lib/token.h"
 #include "lib/bytesequence.h"
 #include "lib/boolean.h"
+#include "lib/list.h"
 
 void hexdump_string(const sh_char_t* str);
 
@@ -28,6 +29,7 @@ void do_sh_token(sh_char_t* value, size_t n);
 void do_sh_bytesequence(sh_byte_t* value, size_t n);
 void do_sh_boolean(sh_bool_t value);
 void do_sh_item();
+void do_sh_list();
 
 int main() {
 
@@ -111,6 +113,12 @@ int main() {
 	printf("%c[32m === PARAMETERS ===========%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_item();
+	#endif
+
+	#ifndef NO_LIST
+	printf("%c[32m === LIST =================%c[0m\n", 0x1b, 0x1b);
+
+	do_sh_list();
 	#endif
 
 	return 0;
@@ -584,6 +592,81 @@ void do_sh_item() {
 		}
 
 		SH_Token__destroy(obj, 0);
+	}
+}
+
+void _print_list(SH_List* list) {
+	sh_char_t* s;
+	int err = 0;
+
+	printf("  - count = %lu\n", list->count);
+
+	s = SH_List__to_s(list, &err);
+	if ((sh_char_t*)0 == s || err) {
+		printf("  * unable to to_s: [%llX] 0x%08X\n", (long long)s, err);
+	} else {
+		printf("  - to_s =:\n");
+		hexdump_string(s);
+		free(s);
+	}
+}
+void do_sh_list() {
+	SH_List* list;
+
+	SH_Boolean* obj;
+	SH_BareItem* bi;
+	SH_Item* item;
+
+	int err = 0;
+
+	list = SH_List__init(&err);
+	if ((SH_List*)0 == list || err) {
+		printf("* unable to init SH_List: [%llX] 0x%08X\n", (long long)list, err);
+	} else {
+		printf("+ init SH_List: [%llX]\n", (long long)list);
+
+		_print_list(list);
+
+		obj = SH_Boolean__init(SH_FALSE, &err);
+		if ((SH_Boolean*)0 == obj || err) {
+			/**/
+		} else {
+			bi = SH_BareItem__init_boolean(obj, &err);
+			if ((SH_BareItem*)0 == bi || err) {
+				/**/
+			} else {
+				item = SH_Item__init(bi, (SH_dict*)0, &err);
+				if ((SH_Item*)0 == item || err) {
+					/**/
+				} else {
+					SH_List__add(list, item, &err);
+					if (err) {
+						printf("  * unable to add: 0x%08X\n", err);
+					} else {
+						_print_list(list);
+					}
+
+					SH_List__add(list, item, &err);
+					if (err) {
+						printf("  * unable to add: 0x%08X\n", err);
+					} else {
+						_print_list(list);
+					}
+
+					SH_List__add(list, item, &err);
+					if (err) {
+						printf("  * unable to add: 0x%08X\n", err);
+					} else {
+						_print_list(list);
+					}
+
+					SH_Item__destroy(item, SH_FALSE, 0);
+				}
+				SH_BareItem__destroy(bi, SH_FALSE, 0);
+			}
+			SH_Boolean__destroy(obj, 0);
+		}
+		SH_List__destroy(list, SH_FALSE, 0);
 	}
 }
 

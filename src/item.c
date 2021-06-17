@@ -73,8 +73,6 @@ SH_Item__add_param(SH_Item* obj, SH_Key* key, SH_Item* item, int* err) {
 	SH_dict__add(obj->params, key, item, err);
 }
 
-#include <stdio.h>
-
 typedef
 struct __sh_item__string __sh_item__string;
 struct __sh_item__string {
@@ -84,7 +82,7 @@ struct __sh_item__string {
 };
 
 void
-__SH_Item__inner_item__to_s(SH_Key* key, SH_Item* obj, void* ptr, int* err) {
+__SH_Item__to_s_param(SH_Key* key, SH_Item* obj, void* ptr, int* err) {
 	__sh_item__string* str;
 
 	sh_char_t* k; /* key string */
@@ -133,7 +131,7 @@ SH_Item__to_s(SH_Item* obj, int* err) {
 	obj_s = SH_BareItem__to_s(obj->item, err);
 	__cascade(err, (sh_char_t*)0);
 
-	SH_dict__each(obj->params, &__SH_Item__inner_item__to_s, (void*)(&str), err);
+	SH_dict__each(obj->params, &__SH_Item__to_s_param, (void*)(&str), err);
 	if (*err) {
 		free(obj_s);
 		for (i = 0; i < str.n; i++) {

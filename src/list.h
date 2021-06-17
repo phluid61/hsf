@@ -20,5 +20,9 @@ SH_List__each(SH_List* obj, void (*func)(SH_Item* item, void* ptr, int* err), vo
 void
 SH_List__each_pair(SH_List* obj, void (*func)(SH_Item* item, size_t i, void* ptr, int* err), void* ptr, int* err);
 
+/*malloc*/
+sh_char_t*
+SH_List__to_s(SH_List* obj, int* err);
+
 #endif
 /* vim: set ts=4 sts=4 sw=4: */

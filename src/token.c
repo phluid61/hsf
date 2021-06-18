@@ -9,8 +9,6 @@
 
 #include "error_macros.h"
 
-/* FIXME: these don't work with non-ASCII (high-bit set) chars */
-
 #define LEGIT_START(c) ( \
  ((sh_char_t)(c) >= SH_CHAR_C(64)) ? \
  ((UINT64_C(1) << ((sh_char_t)(c) - SH_CHAR_C(64))) & UINT64_C(0x07FFFFFE07FFFFFE)) : \

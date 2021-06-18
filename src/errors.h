@@ -22,6 +22,7 @@
 #define SH_E_NULL_POINTER           0x00000001
 
 #define SH_E_ITEM_WRONG_TYPE        0x00100001
+#define SH_E_PARAMETERS_OVERFLOW    0x00100002
 
 #define SH_E_INTEGER_OUT_OF_BOUNDS  0x00110001
 
@@ -38,7 +39,7 @@
 #define SH_E_KEY_TOO_LONG           0x00200001
 #define SH_E_KEY_BAD_CHAR           0x00200002
 
-#define SH_E_KEY_LIST_OVERFLOW      0x00300001
+#define SH_E_LIST_OVERFLOW          0x00300001
 
 /* errno */
 #define SH_E_MALLOC_ERROR           0x80000001

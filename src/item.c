@@ -71,6 +71,10 @@ SH_Item__params(SH_Item* obj, int* err) {
 
 void
 SH_Item__add_param(SH_Item* obj, SH_Key* key, SH_Item* item, int* err) {
+	if (SH_dict__count(obj->params, 0) >= 256) { /* FIXME: magic numer, RFC 8941, 3.1.2 */
+		__raise(err, SH_E_PARAMETERS_OVERFLOW);
+		return;
+	}
 	SH_dict__add(obj->params, key, item, err);
 }
 

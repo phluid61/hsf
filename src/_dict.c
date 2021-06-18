@@ -154,6 +154,23 @@ SH_dict__get(SH_dict* obj, SH_Key* key, int* err) {
 	return (SH_Item*)0;
 }
 
+size_t
+SH_dict__count(SH_dict* obj, int* err) {
+	SH_dict_bucket* bucket;
+	size_t n = 0;
+
+	__cascade(err, (size_t)0);
+
+	bucket = obj->_list;
+	while ((SH_dict_bucket*)0 != bucket) {
+		n += bucket->num;
+		bucket = bucket->next;
+	}
+
+	__clear(err);
+	return n;
+}
+
 /* doesn't check for duplicates */
 void
 SH_dict__add(SH_dict* obj, SH_Key* key, SH_Item* value, int* err) {

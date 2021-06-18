@@ -14,6 +14,9 @@ SH_dict__destroy(SH_dict* obj, sh_bool_t recursive, int* err);
 SH_Item*
 SH_dict__get(SH_dict* obj, SH_Key* key, int* err);
 
+size_t
+SH_dict__count(SH_dict* obj, int* err);
+
 void
 SH_dict__add(SH_dict* obj, SH_Key* key, SH_Item* item, int* err);
 

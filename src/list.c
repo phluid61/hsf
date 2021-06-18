@@ -53,7 +53,7 @@ void
 SH_List__add(SH_List* obj, SH_Item* item, int* err) {
 	__cascade(err,);
 	if (obj->count >= SH_LIST_CAPACITY) {
-		__raise(err, SH_E_KEY_LIST_OVERFLOW);
+		__raise(err, SH_E_LIST_OVERFLOW);
 		return;
 	}
 	obj->_list[obj->count++] = item;

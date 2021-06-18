@@ -12,7 +12,7 @@ LIBS    :=
 NAMES = integer decimal string token bytesequence boolean bareitem item key _dict list
 
 # Dependencies shared by all objects/modules
-DEPS  = $(SRCDIR)/types.h $(SRCDIR)/errors.h $(SRCDIR)/error_macros.h
+DEPS  = Makefile $(SRCDIR)/types.h $(SRCDIR)/errors.h $(SRCDIR)/error_macros.h
 
 # Specific dependencies/headers/etc. can be defined by:
 #
@@ -64,8 +64,8 @@ MAINOPTS += -DNO_DECIMAL
 MAINOPTS += -DNO_STRING
 MAINOPTS += -DNO_TOKEN
 MAINOPTS += -DNO_BYTESEQ
-MAINOPTS += -DNO_BOOLEAN
-MAINOPTS += -DNO_PARAMETERS
+#MAINOPTS += -DNO_BOOLEAN
+#MAINOPTS += -DNO_PARAMETERS
 #MAINOPTS += -DNO_LIST
 
 main.o: main.c $(HEADERS)

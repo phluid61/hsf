@@ -105,7 +105,7 @@ struct SH_List {
 	size_t   count;
 };
 
-/* 8-bit hash = 256 buckets */
+/* 8-bit hash = 2^8=256 buckets */
 #define SH_dict_bucket_count 256
 
 /* For a perfect hash, 1024 pairs / 256 buckets = 4 pairs per bucket */

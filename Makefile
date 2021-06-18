@@ -9,7 +9,7 @@ OBJECTS :=
 LIBS    :=
 
 # Names of individual objects/modules
-NAMES = integer decimal string token bytesequence boolean bareitem item key _dict list
+NAMES = integer decimal string token bytesequence boolean innerlist bareitem item key _dict list
 
 # Dependencies shared by all objects/modules
 DEPS  = Makefile $(SRCDIR)/types.h $(SRCDIR)/errors.h $(SRCDIR)/error_macros.h
@@ -65,8 +65,9 @@ MAINOPTS += -DNO_STRING
 MAINOPTS += -DNO_TOKEN
 MAINOPTS += -DNO_BYTESEQ
 MAINOPTS += -DNO_BOOLEAN
-#MAINOPTS += -DNO_PARAMETERS
-#MAINOPTS += -DNO_LIST
+MAINOPTS += -DNO_PARAMETERS
+MAINOPTS += -DNO_LIST
+#MAINOPTS += -DNO_INNERLIST
 
 main.o: main.c $(HEADERS)
 	$(CC) $(MAINOPTS) $(CFLAGS) -c $< -o $@

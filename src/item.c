@@ -23,7 +23,7 @@ SH_Item__init(SH_BareItem* item, SH_dict* params, int* err) {
 		__raise(err, SH_E_MALLOC_ERROR);
 		return (SH_Item*)0;
 	}
-
+/*
 	if ((SH_dict*)0 == params) {
 		params = SH_dict__init(err);
 		if (*err) {
@@ -31,7 +31,7 @@ SH_Item__init(SH_BareItem* item, SH_dict* params, int* err) {
 			return (SH_Item*)0;
 		}
 	}
-
+*/
 	obj->item = item;
 	obj->params = params;
 

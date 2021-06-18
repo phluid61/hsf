@@ -32,7 +32,7 @@ typedef enum {
 	SH_BYTESEQUENCE,
 	SH_BOOLEAN,
 
-	/*SH_INNERLIST*/ /* special case */
+	SH_INNERLIST, /* special case */
 } SH_Item_type;
 
 typedef struct SH_Item         SH_Item;
@@ -45,6 +45,7 @@ typedef struct SH_Integer      SH_Integer;
 typedef struct SH_Key          SH_Key;
 typedef struct SH_String       SH_String;
 typedef struct SH_Token        SH_Token;
+typedef struct SH_InnerList    SH_InnerList;
 
 typedef struct SH_List         SH_List;
 
@@ -102,6 +103,14 @@ struct SH_Token {
 
 struct SH_List {
 	SH_Item* _list[SH_LIST_CAPACITY];
+	size_t   count;
+};
+
+/* RFC 8941, 3.1.1 */
+#define SH_INNERLIST_CAPACITY 256
+
+struct SH_InnerList {
+	SH_Item* _list[SH_INNERLIST_CAPACITY];
 	size_t   count;
 };
 

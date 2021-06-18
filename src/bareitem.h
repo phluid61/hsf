@@ -26,6 +26,9 @@ SH_BareItem__init_bytesequence(SH_ByteSequence* value, int* err);
 SH_BareItem*
 SH_BareItem__init_boolean(SH_Boolean* value, int* err);
 
+SH_BareItem*
+SH_BareItem__init_innerlist(SH_InnerList* value, int* err);
+
 void
 SH_BareItem__destroy(SH_BareItem* obj, sh_bool_t recursive, int* err);
 
@@ -49,6 +52,9 @@ SH_BareItem__get_bytesequence(SH_BareItem* obj, int* err);
 
 SH_Boolean*
 SH_BareItem__get_boolean(SH_BareItem* obj, int* err);
+
+SH_InnerList*
+SH_BareItem__get_innerlist(SH_BareItem* obj, int* err);
 
 sh_char_t*
 SH_BareItem__to_s(SH_BareItem* obj, int* err);

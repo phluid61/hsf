@@ -9,6 +9,7 @@
 #include "token.h"
 #include "bytesequence.h"
 #include "boolean.h"
+#include "innerlist.h"
 
 #include <stdint.h>
 
@@ -67,6 +68,11 @@ SH_BareItem__init_boolean(SH_Boolean* value, int* err) {
 	do_init(SH_BOOLEAN, value, err);
 }
 
+SH_BareItem*
+SH_BareItem__init_innerlist(SH_InnerList* value, int* err) {
+	do_init(SH_INNERLIST, value, err);
+}
+
 #define do_destroy(t, obj) { \
 	t ## __destroy((t*)(obj->ptr), 0); \
 	free(obj); \
@@ -109,6 +115,13 @@ SH_BareItem__destroy(SH_BareItem *obj, sh_bool_t recursive, int* err) {
 
 		case SH_BOOLEAN:
 			do_destroy(SH_Boolean, obj);
+			__clear(err);
+			return;
+
+		case SH_INNERLIST:
+			/*do_destroy(SH_InnerList, recursive, obj);*/
+			SH_InnerList__destroy((SH_InnerList*)(obj->ptr), recursive, 0);
+			free(obj);
 			__clear(err);
 			return;
 
@@ -170,6 +183,11 @@ SH_BareItem__get_boolean(SH_BareItem* obj, int* err) {
 	do_get(obj, err, SH_BOOLEAN, SH_Boolean);
 }
 
+SH_InnerList*
+SH_BareItem__get_innerlist(SH_BareItem* obj, int* err) {
+	do_get(obj, err, SH_INNERLIST, SH_InnerList);
+}
+
 sh_char_t*
 SH_BareItem__to_s(SH_BareItem* obj, int* err) {
 	sh_char_t* str;
@@ -202,7 +220,10 @@ SH_BareItem__to_s(SH_BareItem* obj, int* err) {
 
 	case SH_BOOLEAN:
 		return SH_Boolean__to_s((SH_Boolean*)(obj->ptr), err);
-	
+
+	case SH_INNERLIST:
+		return SH_InnerList__to_s((SH_InnerList*)(obj->ptr), err);
+
 	/*default: fall out */
 	}
 

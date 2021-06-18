@@ -629,15 +629,15 @@ void do_sh_list() {
 
 		obj = SH_Boolean__init(SH_FALSE, &err);
 		if ((SH_Boolean*)0 == obj || err) {
-			/**/
+			printf("  * unable to create SH_Boolean: [%llX] 0x%08X\n", (long long)obj, err);
 		} else {
 			bi = SH_BareItem__init_boolean(obj, &err);
 			if ((SH_BareItem*)0 == bi || err) {
-				/**/
+				printf("  * unable to create SH_BareItem: [%llX] 0x%08X\n", (long long)bi, err);
 			} else {
 				item = SH_Item__init(bi, (SH_dict*)0, &err);
 				if ((SH_Item*)0 == item || err) {
-					/**/
+					printf("  * unable to create SH_Item: [%llX] 0x%08X\n", (long long)item, err);
 				} else {
 					SH_List__add(list, item, &err);
 					if (err) {

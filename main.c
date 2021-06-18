@@ -136,21 +136,27 @@ void do_sh_bareitem(SH_BareItem* obj) {
 
 	x = (void*)SH_BareItem__get_integer(obj, &err);
 	printf("    o get_integer: [%llX] 0x%08X\n", (long long)x, err);
+	err = 0;
 
 	x = (void*)SH_BareItem__get_decimal(obj, &err);
 	printf("    o get_decimal: [%llX] 0x%08X\n", (long long)x, err);
+	err = 0;
 
 	x = (void*)SH_BareItem__get_string(obj, &err);
 	printf("    o get_string: [%llX] 0x%08X\n", (long long)x, err);
+	err = 0;
 
 	x = (void*)SH_BareItem__get_token(obj, &err);
 	printf("    o get_token: [%llX] 0x%08X\n", (long long)x, err);
+	err = 0;
 
 	x = (void*)SH_BareItem__get_bytesequence(obj, &err);
 	printf("    o get_bytesequence: [%llX] 0x%08X\n", (long long)x, err);
+	err = 0;
 
 	x = (void*)SH_BareItem__get_boolean(obj, &err);
 	printf("    o get_boolean: [%llX] 0x%08X\n", (long long)x, err);
+	err = 0;
 
 	s = SH_BareItem__to_s(obj, &err);
 	if ((sh_char_t*)0 == s || err) {
@@ -486,13 +492,13 @@ void __do_sh_item(SH_Item* obj) {
 	__display_item(obj);
 
 	key1 = SH_Key__init((unsigned char*)"key1", 4, &err);
-	val1 = SH_Item__init(SH_BareItem__init_boolean(SH_Boolean__init(SH_TRUE, &err), &err), 0, &err);
+	val1 = SH_Item__init(SH_BareItem__init_boolean(SH_Boolean__init(SH_FALSE, &err), &err), 0, &err);
 
 	SH_Item__add_param(obj, key1, val1, &err);
 	__display_item(obj);
 
 	key2 = SH_Key__init((unsigned char*)"k2", 2, &err);
-	val2 = SH_Item__init(SH_BareItem__init_boolean(SH_Boolean__init(SH_FALSE, &err), &err), 0, &err);
+	val2 = SH_Item__init(SH_BareItem__init_boolean(SH_Boolean__init(SH_TRUE, &err), &err), 0, &err);
 
 	SH_Item__add_param(obj, key2, val2, &err);
 	__display_item(obj);

@@ -5,6 +5,7 @@
 #include "bareitem.h"
 #include "key.h"
 #include "_dict.h"
+#include "boolean.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -100,16 +101,21 @@ __SH_Item__to_s_param(SH_Key* key, SH_Item* obj, void* ptr, int* err) {
 		return;
 	}
 
-	o = SH_Item__to_s(obj, &local_err);
-	/*o = SH_BareItem__to_s(obj->item, &local_err);*/
-	if (local_err) {
-		free(k);
-		__raise(err, local_err);
-		return;
-	}
+	if (SH_BOOLEAN == SH_BareItem__type(obj->item, &local_err) && SH_Boolean__true(SH_BareItem__get_boolean(obj->item, &local_err), &local_err)) {
+		str->a[str->n ++] = k; str->length += strlen((const char*)k);
+		str->a[str->n ++] = (sh_char_t*)0;
+	} else {
+		local_err = SH_E_NO_ERROR; /* ignore any errors above */
+		o = SH_Item__to_s(obj, &local_err);
+		if (local_err) {
+			free(k);
+			__raise(err, local_err);
+			return;
+		}
 
-	str->a[str->n ++] = k; str->length += strlen((const char*)k);
-	str->a[str->n ++] = o; str->length += strlen((const char*)o);
+		str->a[str->n ++] = k; str->length += strlen((const char*)k);
+		str->a[str->n ++] = o; str->length += strlen((const char*)o);
+	}
 }
 
 /* malloc */
@@ -162,14 +168,18 @@ SH_Item__to_s(SH_Item* obj, int* err) {
 	}
 
 	for (i = 0; i < str.n; i++) {
-		*ptr = (i % 2 ? SH_CHAR_C('=') : SH_CHAR_C(';'));
-		ptr ++;
-
 		tmp_s = str.a[i];
-		n = strlen((const char*)tmp_s);
-		memcpy((void*)ptr, (const void*)tmp_s, n);
-		free(str.a[i]);
-		ptr += n;
+
+		/* if the string is NULL, it was (probably) a SH_TRUE value, so don't emit anything */
+		if ((sh_char_t*)0 != tmp_s) {
+			*ptr = (i % 2 ? SH_CHAR_C('=') : SH_CHAR_C(';'));
+			ptr ++;
+
+			n = strlen((const char*)tmp_s);
+			memcpy((void*)ptr, (const void*)tmp_s, n);
+			free(str.a[i]);
+			ptr += n;
+		}
 	}
 
 	*ptr = SH_CHAR_C(0);

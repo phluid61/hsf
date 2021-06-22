@@ -14,6 +14,7 @@
 #include "lib/token.h"
 #include "lib/bytesequence.h"
 #include "lib/boolean.h"
+#include "lib/innerlist.h"
 #include "lib/list.h"
 
 void hexdump_string(const sh_char_t* str);
@@ -30,6 +31,7 @@ void do_sh_bytesequence(sh_byte_t* value, size_t n);
 void do_sh_boolean(sh_bool_t value);
 void do_sh_item();
 void do_sh_list();
+void do_sh_innerlist();
 
 int main() {
 
@@ -119,6 +121,12 @@ int main() {
 	printf("%c[32m === LIST =================%c[0m\n", 0x1b, 0x1b);
 
 	do_sh_list();
+	#endif
+
+	#ifndef NO_INNERLIST
+	printf("%c[32m === INNERLIST ============%c[0m\n", 0x1b, 0x1b);
+
+	do_sh_innerlist();
 	#endif
 
 	return 0;
@@ -674,6 +682,132 @@ void do_sh_list() {
 		}
 		SH_List__destroy(list, SH_FALSE, 0);
 	}
+}
+
+
+void _print_innerlist(SH_InnerList* list) {
+	sh_char_t* s;
+	int err = 0;
+
+	printf("  - count = %lu\n", list->count);
+
+	s = SH_InnerList__to_s(list, &err);
+	if ((sh_char_t*)0 == s || err) {
+		printf("  * unable to to_s: [%llX] 0x%08X\n", (long long)s, err);
+	} else {
+		printf("  - to_s =:\n");
+		hexdump_string(s);
+		free(s);
+	}
+}
+void do_sh_innerlist() {
+	SH_List* list;
+	SH_InnerList* innerlist;
+
+	SH_BareItem* list_bi;
+	SH_Item* list_item;
+
+	SH_Boolean* b;
+	SH_BareItem* bi;
+	SH_Item* item;
+
+	SH_Key  *key1;
+	SH_Item *val1;
+
+	int err = 0;
+
+	list = SH_List__init(&err);
+	if (err) {
+		printf("* unable to init SH_List\n");
+		return;
+	}
+	b = SH_Boolean__init(SH_FALSE, &err);
+	if (err) {
+		printf("* unable to init SH_Boolean\n");
+		SH_List__destroy(list, SH_FALSE, 0);
+		return;
+	}
+	bi = SH_BareItem__init_boolean(b, &err);
+	if (err) {
+		printf("* unable to init_boolean SH_BareItem\n");
+		SH_Boolean__destroy(b, 0);
+		SH_List__destroy(list, SH_FALSE, 0);
+		return;
+	}
+	item = SH_Item__init(bi, (SH_dict*)0, &err);
+	if (err) {
+		printf("* unable to init SH_Item\n");
+		SH_BareItem__destroy(bi, SH_TRUE, 0);
+		SH_List__destroy(list, SH_FALSE, 0);
+		return;
+	}
+
+	innerlist = SH_InnerList__init(&err);
+	if ((SH_InnerList*)0 == innerlist || err) {
+		printf("* unable to init SH_InnerList: [%llX] 0x%08X\n", (long long)innerlist, err);
+	} else {
+		printf("+ init SH_InnerList: [%llX]\n", (long long)innerlist);
+
+		_print_innerlist(innerlist);
+
+		SH_InnerList__add(innerlist, item, &err);
+		if (err) {
+			printf("  * unable to add to SH_InnerList: 0x%08X\n", err);
+		} else {
+			_print_innerlist(innerlist);
+		}
+
+		SH_InnerList__add(innerlist, item, &err);
+		if (err) {
+			printf("  * unable to add to SH_InnerList: 0x%08X\n", err);
+		} else {
+			_print_innerlist(innerlist);
+		}
+
+		SH_InnerList__add(innerlist, item, &err);
+		if (err) {
+			printf("  * unable to add to SH_InnerList: 0x%08X\n", err);
+		} else {
+			_print_innerlist(innerlist);
+		}
+
+		list_bi = SH_BareItem__init_innerlist(innerlist, &err);
+		if (err) {
+			printf("  * unable to init SH_BareItem from innerlist: 0x%08X\n", err);
+		} else {
+			list_item = SH_Item__init(list_bi, (SH_dict*)0, 0);
+
+			SH_List__add(list, item, 0);
+			SH_List__add(list, list_item, 0);
+			SH_List__add(list, item, 0);
+
+			_print_list(list);
+
+			/* FIXME: catch errors here: */
+			key1 = SH_Key__init((unsigned char*)"test", 4, &err);
+			val1 = SH_Item__init(SH_BareItem__init_integer(SH_Integer__init(SH_INT_C(42), &err), &err), 0, &err);
+			if (err) {
+				printf("    x [%llX]=[%llX] 0x%08X\n", (long long)key1, (long long)val1, err);
+			}
+			SH_Item__add_param(list_item, key1, val1, &err);
+			if (err) {
+				printf("    x [%llX]=[%llX] 0x%08X\n", (long long)key1, (long long)val1, err);
+			} else {
+				_print_list(list);
+			}
+
+			SH_Key__destroy(key1, 0);
+			SH_Item__destroy(val1, SH_TRUE, 0);
+
+			SH_Item__destroy(list_item, SH_FALSE, 0);
+			SH_BareItem__destroy(list_bi, SH_FALSE, 0);
+		}
+
+		SH_InnerList__destroy(innerlist, SH_FALSE, 0);
+	}
+
+	SH_Item__destroy(item, SH_TRUE, 0);
+	SH_List__destroy(list, SH_FALSE, 0);
 }
 
 /***** everything from here up is experimental *****/

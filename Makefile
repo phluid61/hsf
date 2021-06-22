@@ -69,7 +69,7 @@ MAINOPTS += -DNO_PARAMETERS
 MAINOPTS += -DNO_LIST
 #MAINOPTS += -DNO_INNERLIST
 
-main.o: main.c $(HEADERS)
+main.o: main.c $(HEADERS) $(DEPS)
 	$(CC) $(MAINOPTS) $(CFLAGS) -c $< -o $@
 main: main.o $(OBJECTS)
 	$(LINK.o) -o $@ $^ -lm

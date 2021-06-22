@@ -126,7 +126,7 @@ SH_InnerList__to_s(SH_InnerList* obj, int* err) {
 	str.n = (size_t)0;
 
 	SH_InnerList__each(obj, &__SH_InnerList__to_s_item, (void*)(&str), err);
-	if (*err) {
+	if (__catch(err)) {
 		for (i = 0; i < str.n; i++) {
 			free(str.a[i]);
 		}

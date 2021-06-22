@@ -23,15 +23,15 @@ SH_Item__init(SH_BareItem* item, SH_dict* params, int* err) {
 		__raise(err, SH_E_MALLOC_ERROR);
 		return (SH_Item*)0;
 	}
-/*
+
 	if ((SH_dict*)0 == params) {
 		params = SH_dict__init(err);
-		if (*err) {
+		if (__catch(err)) {
 			free(obj);
 			return (SH_Item*)0;
 		}
 	}
-*/
+
 	obj->item = item;
 	obj->params = params;
 
@@ -142,7 +142,7 @@ SH_Item__to_s(SH_Item* obj, int* err) {
 	__cascade(err, (sh_char_t*)0);
 
 	SH_dict__each(obj->params, &__SH_Item__to_s_param, (void*)(&str), err);
-	if (*err) {
+	if (__catch(err)) {
 		free(obj_s);
 		for (i = 0; i < str.n; i++) {
 			free(str.a[i]);

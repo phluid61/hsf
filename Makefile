@@ -74,7 +74,7 @@ main.o: main.c $(HEADERS) $(DEPS)
 main: main.o $(OBJECTS)
 	$(LINK.o) -o $@ $^ -lm
 .PHONY: run
-run: main
+run: all
 	-./main
 
 ### META-RULES

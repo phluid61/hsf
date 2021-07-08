@@ -812,8 +812,8 @@ void do_sh_innerlist() {
 
 /***** everything from here up is experimental *****/
 
-const char hexdump_rule[73] = "+--------------------------------------------------+-------------------+";
-const char hexdump_line[73] = "|                                                  |                   |";
+const char hexdump_rule[74] = "+---------------------------------------------------+-------------------+";
+const char hexdump_line[74] = "|                         :                         |         :         |";
 const char hexdump_char[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
 void hexdump_string(const sh_char_t* str) {
@@ -835,13 +835,13 @@ void hexdump_string(const sh_char_t* str) {
 
 	while (SH_CHAR_C(0) != *ptr) {
 		if (n == 0) {
-			memcpy((void*)line, (const void*)hexdump_line, sizeof(char)*73);
+			memcpy((void*)line, (const void*)hexdump_line, sizeof(char)*74);
 			i = 2;
-			j = 53;
+			j = 54;
 		}
 		if (n == 8) {
-			i++;
-			j++;
+			i += 2;
+			j ++;
 		}
 
 		line[i++] = hexdump_char[((*ptr) & 0xF0) >> 4];

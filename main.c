@@ -812,15 +812,17 @@ void do_sh_innerlist() {
 
 /***** everything from here up is experimental *****/
 
-const char hexdump_rule[74] = "+---------------------------------------------------+-------------------+";
-const char hexdump_line[74] = "|                         :                         |         :         |";
+#define HEXDUMP_LEN 74
+
+const char hexdump_rule[HEXDUMP_LEN] = "+---------------------------------------------------+-------------------+";
+const char hexdump_line[HEXDUMP_LEN] = "|                         :                         |         :         |";
 const char hexdump_char[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
 void hexdump_string(const sh_char_t* str) {
 	sh_char_t* ptr = (sh_char_t*)str;
 	int n = 0;
 	int i, j;
-	char line[73];
+	char line[HEXDUMP_LEN];
 
 	if ((sh_char_t*)0 == ptr) {
 		printf("NULL\n");
